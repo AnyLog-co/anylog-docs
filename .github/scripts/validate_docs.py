@@ -62,7 +62,7 @@ for slug in sorted(doc_files - set(nav_slugs.keys())):
 # ── 4. Internal link checks ───────────────────────────────────────────────────
 
 # Match [text](/docs/slug) or [text](/docs/slug/) with optional #anchor
-LINK_RE = re.compile(r"\[([^\]]*)\]\((/docs/([^)/\s#][^)\s#]*)/?(?:#[^)]*)?\)")
+LINK_RE = re.compile(r"\[([^\]]+)\]\(/docs/([^/#\s)]+)\/?(?:#[^)]+)?\)")
 
 for fname in sorted(os.listdir(DOCS_DIR)):
     if not fname.endswith(".md"):
@@ -72,8 +72,9 @@ for fname in sorted(os.listdir(DOCS_DIR)):
         lines = f.readlines()
     for lineno, line in enumerate(lines, 1):
         for m in LINK_RE.finditer(line):
-            href = m.group(2)
-            slug = m.group(3).strip("/")
+            # slug = m.group(3).strip("/")
+            slug = m.group(2)
+            href = "/docs/" + slug
             if slug not in doc_files:
                 errors.append(
                     "[Links] {}:{} — broken link '{}' (no _docs/{}.md)".format(
