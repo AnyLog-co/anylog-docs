@@ -1,6 +1,6 @@
 title: AnyLog Docs
 description: Technical documentation for AnyLog Edge Data Fabric
-baseurl: ""
+baseurl: "/anylog-docs"
 url: "https://anylog-docs.github.io"
 
 # Build
@@ -32,6 +32,8 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - vendor/
+  - .bundle/
 
 # ── Sidebar navigation ──────────────────────────────────
 # Add/reorder entries here as new docs are created.
