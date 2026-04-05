@@ -360,6 +360,100 @@ curl -X GET 127.0.0.1:32349 \
 
 ---
 
+---
+
+## Node directory structure
+
+The default directory layout (used in Docker deployments):
+
+```
+/app/
+└── EdgeLake/
+    ├── blockchain/          ← local copy of the metadata (JSON)
+    └── data/
+        ├── archive/         ← archived data files
+        ├── blobs/           ← unstructured data
+        ├── dbms/            ← persistent SQLite data (if used)
+        ├── distr/           ← HA distribution staging
+        ├── error/           ← files that failed database storage
+        ├── pem/             ← SSL keys and certificates
+        ├── prep/            ← intermediate processing
+        ├── test/            ← output of test queries
+        ├── watch/           ← drop JSON/SQL files here for auto-ingestion
+        └── bwatch/          ← unstructured data watch directory
+```
+
+Create the work directories on first run:
+```anylog
+create work directories
+```
+
+List the directories configured on this node:
+```anylog
+get dictionary _dir
+```
+
+---
+
+## The AnyLog CLI
+
+When a node starts, it presents the AnyLog CLI with a prompt like `AL anylog-node >`. Update the prompt:
+```anylog
+set node name [node name]
+```
+
+Exit and shut down the node:
+```anylog
+exit node
+```
+
+### The local dictionary
+
+Every node has a dictionary that maps keys to values. Use `!key` to reference a stored value:
+
+```anylog
+# Set a value
+master_node = 10.0.0.1:32048
+
+# Or use 'set' if the key name conflicts with a command
+set dbms_name = mydb
+
+# Read a value
+!master_node
+get !dbms_name
+
+# List all key-value pairs
+get dictionary
+```
+
+Environment variables are available with the `$` prefix: `$HOME`, `$PATH`.
+
+### The help command
+
+```anylog
+help                          # list all commands
+help get                      # list all 'get' commands
+help blockchain insert        # usage and examples for a specific command
+help index                    # browse commands by category
+help index s                  # all commands in category 's'
+```
+
+### Logs
+
+Every node maintains three dynamic logs:
+
+```anylog
+get event log      # commands executed on this node
+get error log      # commands that failed
+get query log      # SQL queries executed (must be enabled separately)
+
+reset event log
+reset error log
+reset query log
+```
+
+---
+
 ## Troubleshooting
 
 ### Common issues

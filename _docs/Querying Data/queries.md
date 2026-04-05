@@ -8,6 +8,28 @@ Queries are issued to a **Query Node** which uses blockchain metadata to locate 
 
 ---
 
+## Discover tables and columns
+
+Before querying, you can inspect what data is available across the network.
+
+```anylog
+# List all virtual tables
+get virtual tables
+get virtual tables where table = ping_sensor
+
+# Show which nodes host each table
+get data nodes
+get data nodes where table = ping_sensor
+get data nodes where sort = (1,2)    # sort by DBMS (col 1), table (col 2)
+
+# List columns of a table
+get columns where dbms = [dbms] and table = [table] and format = [table|json]
+```
+
+> The first four columns AnyLog adds to every table — `row_id`, `insert_timestamp`, `tsd_name`, `tsd_id` — are for internal data management. You can safely ignore them in SELECT statements.
+
+---
+
 ## Network queries with `run client`
 
 Without `run client`, a query executes only on the local node. To query across the network:
