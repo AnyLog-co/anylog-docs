@@ -1,68 +1,68 @@
 title: AnyLog Docs
 description: Technical documentation for AnyLog Edge Data Fabric
-baseurl: ""
-url: "https://anylog-docs.github.io"
-
-# Build
+baseurl: ''
+url: https://anylog-docs.github.io
 markdown: kramdown
 highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter: rouge
-
-# Collections
 collections:
   docs:
     output: true
     permalink: /docs/:name/
-
-# Defaults
 defaults:
-  - scope:
-      path: ""
-      type: docs
-    values:
-      layout: page
-
+- scope:
+    path: ''
+    type: docs
+  values:
+    layout: page
 plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-
+- jekyll-feed
+- jekyll-seo-tag
 exclude:
-  - Gemfile
-  - Gemfile.lock
-  - README.md
-  - vendor
-
-# ── Sidebar navigation ──────────────────────────────────
-# Add/reorder entries here as new docs are created.
-# Each `slug` must match the filename in _docs/ (without .md)
+- Gemfile
+- Gemfile.lock
+- README.md
+- vendor
 nav:
-  - title: Getting Started
-    items:
-      - slug: introduction
-        title: Introduction to AnyLog
-      - slug: installing-anylog
-        title: Installing & Deploying
-  - title: Managing Data
-    items:
-      - slug: adding-data
-        title: Adding Data
-      - slug: data-ingestion
-        title: Ingestion & msg client
-      - slug: opcua
-        title: OPC-UA
-  - title: Querying Data
-    items:
-      - slug: queries
-        title: Querying Data
-  - title: Monitoring & Operations
-    items:
-      - slug: aggregations
-        title: Aggregations
-      - slug: high-availability
-        title: High Availability
-  - title: Tools & UI
-    items:
-      - slug: remote-gui
-        title: Remote GUI
+- title: Getting Started
+  items:
+  - slug: introduction
+    title: Introduction to AnyLog
+  - slug: installing-anylog
+    title: Installing & Deploying
+- title: Managing Data
+  items:
+  - slug: adding-data
+    title: Adding Data
+  - slug: data-ingestion
+    title: Ingestion & msg client
+  - slug: opcua
+    title: OPC-UA
+- title: Querying Data
+  items:
+  - slug: queries
+    title: Querying Data
+  - slug: using-rest
+    title: Using Rest
+- title: Monitoring & Operations
+  items:
+  - slug: aggregations
+    title: Aggregations
+  - slug: high-availability
+    title: High Availability
+- title: Tools & UI
+  items:
+  - slug: remote-gui
+    title: Remote GUI
+- title: Managing Data (Southbound)
+  items: []
+- title: Network & Services
+  items:
+  - slug: background-services
+    title: Background Services
+  - slug: blockchain
+    title: Blockchain
+- title: Tools & Ui
+  items: []

@@ -7,3 +7,5 @@ Gemfile.lock
 vendor/
 node_modules/
 .DS_Store
+venv/
+.idea/
