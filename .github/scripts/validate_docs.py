@@ -78,7 +78,7 @@ for section_dir in sorted(os.listdir(DOCS_DIR)):
     # scan markdown files
     for fname in sorted(os.listdir(section_path)):
 
-        if not fname.endswith(".md"):
+        if not fname.endswith(".md") or fname.upper().startswith("README"):
             continue
 
         slug = fname[:-3]

@@ -67,8 +67,8 @@ nav:
 - title: Managing Data (Southbound)
   items:
   - slug: grpc
-    title: Grpc
-  - slug: live_data_generator
+    title: gRPC
+  - slug: live-data-generator
     title: Live Data Generator
   - slug: node-red
     title: Node Red
@@ -76,5 +76,7 @@ nav:
     title: Syslog
   - slug: video-streaming
     title: Video Streaming
+  - slug: live-data-generator
+    title: Live Data Generator
 - title: Tools & Ui
   items: []
