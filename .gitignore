@@ -10,3 +10,5 @@ node_modules/
 venv/
 .idea/
 __pycache__/
+_site/
+_vender/
