@@ -34,3 +34,4 @@ bundle exec jekyll serve
 
 Push to the `main` branch. GitHub Pages builds and publishes automatically.
 Configure under **Settings → Pages → Source: Deploy from branch → main / root**.
+

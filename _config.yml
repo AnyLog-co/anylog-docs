@@ -28,55 +28,64 @@ exclude:
 nav:
 - title: Getting Started
   items:
-  - slug: introduction
+  - slug: getting-started
     title: Introduction to AnyLog
+    file: Getting Started/getting-started.md
   - slug: installing-anylog
-    title: Installing & Deploying
-- title: Managing Data
-  items:
-  - slug: data-ingestion
-    title: Ingestion & msg client
-  - slug: opcua
-    title: OPC-UA
+    title: Installing & Deploying AnyLog
+    file: Getting Started/installing-anylog.md
 - title: Network & Services
   items:
   - slug: background-services
     title: Background Services
+    file: Network & Services/background-services.md
   - slug: blockchain
-    title: Blockchain
+    title: Blockchain & Metadata
+    file: Network & Services/blockchain.md
+- title: Managing Data (Southbound)
+  items:
+  - slug: data-ingestion
+    title: Data Ingestion
+    file: Managing Data (Southbound)/data-ingestion.md
+  - slug: opcua
+    title: OPC-UA
+    file: Managing Data (Southbound)/opcua.md
+  - slug: grpc
+    title: gRPC
+    file: Managing Data (Southbound)/grpc.md
+  - slug: node-red
+    title: Node-RED
+    file: Managing Data (Southbound)/node-red.md
+  - slug: syslog
+    title: Syslog
+    file: Managing Data (Southbound)/syslog.md
+  - slug: video-streaming
+    title: Video Streaming
+    file: Managing Data (Southbound)/video-streaming.md
+  - slug: live-data-generator
+    title: Live Data Generator
+    file: Managing Data (Southbound)/live-data-generator.md
 - title: Querying Data (Northbound)
   items:
   - slug: queries
     title: Querying Data (Northbound)
+    file: Querying Data (Northbound)/queries.md
   - slug: using-rest
-    title: Using Rest
-  - slug: README
-    title: Readme
+    title: Using REST
+    file: Querying Data (Northbound)/using-rest.md
   - slug: grafana
     title: Grafana
+    file: Querying Data (Northbound)/grafana.md
 - title: Monitoring & Operations
   items:
   - slug: aggregations
     title: Aggregations
+    file: Monitoring & Operations/aggregations.md
   - slug: high-availability
-    title: High Availability
+    title: High Availability (HA)
+    file: Monitoring & Operations/high-availability.md
 - title: Tools & UI
   items:
   - slug: remote-gui
     title: Remote GUI
-- title: Managing Data (Southbound)
-  items:
-  - slug: grpc
-    title: gRPC
-  - slug: live-data-generator
-    title: Live Data Generator
-  - slug: node-red
-    title: Node Red
-  - slug: syslog
-    title: Syslog
-  - slug: video-streaming
-    title: Video Streaming
-  - slug: live-data-generator
-    title: Live Data Generator
-- title: Tools & Ui
-  items: []
+    file: Tools & UI/remote-gui.md

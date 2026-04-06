@@ -1,0 +1,15 @@
+services:
+  docs:
+    build: .
+    container_name: anylog-docs
+    user: root
+    ports:
+      - "4000:4000"
+      - "35729:35729"
+    command: bash /srv/content/.github/scripts/dev-start.sh
+    volumes:
+      - .:/srv/content:cached      # your docs project
+      - bundle-cache:/srv/bundle   # Docker-managed volume for gems
+
+volumes:
+  bundle-cache:
