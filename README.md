@@ -24,6 +24,15 @@ The container mounts your local `_docs/` directory, so edits are reflected live 
 docker compose down
 ```
 
+**Troubleshooting:** If the container exits immediately with a bundle write permissions error (`There was an error while trying to write to /srv/bundle`), run:
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+The `-v` flag removes the cached volume so it gets recreated with the correct permissions.
+
 ---
 
 ## Adding or Updating Content
@@ -48,7 +57,7 @@ layout: page
 
 ### 2. Register it in the navigation
 
-Open [`.github/scripts/navigation.py`](./.github/scripts/navigation.py) and add your page's slug to the appropriate section in `ITEM_ORDER`:
+Open `.github/scripts/navigation.py` and add your page's slug to the appropriate section in `ITEM_ORDER`:
 
 ```python
 ITEM_ORDER = {
@@ -62,6 +71,8 @@ ITEM_ORDER = {
 ```
 
 The slug is the filename without the `.md` extension. The order of slugs within each section controls the order they appear in the sidebar.
+
+`navigation.py` is consumed by `validate_docs.py`, which scans `_docs/`, reconciles it against `ITEM_ORDER`, and writes the `nav` block in `_config.yml`. This runs automatically on `docker compose up` — you do not need to invoke it manually.
 
 ---
 
@@ -92,23 +103,21 @@ This repo follows a **PR-based workflow** — do not push directly to `main`.
 
 ## Prompting Claude to Update a Doc Page
 
-A reliable pattern for getting Claude to rewrite or update a page in a consistent style:
+A reliable pattern for getting Claude to rewrite or update a page while keeping it consistent with the rest of the docs:
 
-1. Provide the **raw GitHub URL** of the file to update
-   (GitHub → open file → click **Raw** → copy the URL)
-2. Provide the **raw GitHub URL** of an example page you want the output to match in style and structure
-3. Include the required **front matter block** in your prompt
-4. Ask Claude to update the first file to match the layout of the second
+1. Provide the **raw GitHub URL** of the file to update — in GitHub, open the file and click **Raw**, then copy the address bar URL
+2. Provide the **raw GitHub URL** of an existing page whose layout you want the output to match
+3. Include the required front matter block in your prompt
+4. Ask Claude to rewrite the first file to match the structure and style of the second
 
-Keep the prompt substantive — at least a short paragraph per section you want changed, not just bullet points. 
-The more context you give about tone, audience, and structure, the better the result.
+Keep the prompt substantive — include at least a short paragraph describing the intent and audience for each major section you want changed, not just bullet points. The more context you give about tone, audience, and structure, the better the result.
 
 ### Sample prompt
- 
+
 The following is a real example using `remote-gui.md`. Copy and adapt it for any page you want to update.
- 
+
 ---
- 
+
 > I need you to update the AnyLog documentation page for the Remote GUI.
 >
 > **File to update (raw URL):**
@@ -135,7 +144,7 @@ The following is a real example using `remote-gui.md`. Copy and adapt it for any
 > The "Plugin system" section is the most important part for contributors — expand the intro paragraph to explain *when* someone would want to build a plugin versus modifying a core feature. Keep the code examples as-is.
 >
 > Use relative links where linking to other pages in `_docs/`. Any link to an external repo or external site should use `<a href="URL" target="_blank">` format. Do not change any section headings — the navigation relies on them.
- 
+
 ---
- 
+
 Adjust the URLs, front matter, and the description of changes to match whatever page you are working on.
