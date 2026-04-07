@@ -22,7 +22,8 @@ An AnyLog Docker container is made of two independent pieces:
 
 The **binary** is the compiled AnyLog runtime. It knows how to execute `.al` scripts but does nothing on its own.
 
-The **deployment-scripts** repo tells the binary what to do: which services to start, which databases to connect, which policies to publish. It's designed to be forked — you own the logic.
+The <a href="https://github.com/AnyLog-co/deployment-scripts/" target="_blank">**deployment-scripts**</a> repo tells the 
+binary what to do: which services to start, which databases to connect, which policies to publish. It's designed to be forked — you own the logic.
 
 ```ini
 DEPLOYMENTS_REPO="https://github.com/AnyLog-co/deployment-scripts"
@@ -79,12 +80,12 @@ When you run `make up ANYLOG_TYPE=anylog-operator`, Docker starts the container 
 process /app/deployment-scripts/node-deployment/main.al
 ```
 
-`main.al` orchestrates the entire startup in fixed stages:
+<a href="https://github.com/AnyLog-co/deployment-scripts/blob/main/node-deployment/main.al" target="_blank">`main.al`</a> orchestrates the entire startup in fixed stages:
 
 ```
 docker run
   │
-  ├─ 1. Set debug / auth mode
+  ├─ 1. authentication mode configuration
   ├─ 2. Detect AnyLog vs EdgeLake
   ├─ 3. Set directory paths  (!anylog_path, !local_scripts)
   ├─ 4. Create work directories
@@ -112,7 +113,8 @@ After startup, `main.al` runs `get processes` and (if MQTT is on) `get msg clien
 
 ## node_configs.env — section by section
 
-All node configuration lives in a single `node_configs.env` file. New users only need to edit **basic** and **secrets**. Every other section is optional and safe to leave at its defaults.
+All node configuration lives in a single `node_configs.env` file. New users only need to edit **basic** and **secrets**. 
+Every other section is optional and safe to leave at its defaults.
 
 ### `.env` — Docker deployment settings
 
@@ -152,7 +154,8 @@ CLUSTER_NAME=anylog-cluster1
 DEFAULT_DBMS=mydb
 ```
 
-> **The one setting that breaks everything if wrong:** `LEDGER_CONN` must point to the master node's TCP IP and port on every operator and query node. Wrong value = nodes can't find each other.
+> **The one setting that breaks everything if wrong:** `LEDGER_CONN` must point to the master node's TCP IP and port on
+> every operator and query node. Wrong value = nodes can't find each other.
 
 ### `southbound` — data ingestion (all off by default)
 
@@ -209,7 +212,8 @@ REMOTE_GUI_TAG=beta2
 
 ## The config policy
 
-The config policy is a JSON document published to the blockchain that permanently records how this node is configured. Other nodes in the network read it to know how to communicate with this node.
+The config policy is a JSON document published to the blockchain that permanently records how this node is configured. 
+Other nodes in the network read it to know how to communicate with this node.
 
 It is built automatically from your env vars during startup by `config_policy.al`. A simplified example:
 
@@ -240,7 +244,8 @@ It is built automatically from your env vars during startup by `config_policy.al
 }}
 ```
 
-The `script` array is the actual startup sequence — each string is an AnyLog command executed in order. This means **you can change what runs at startup by editing this policy**, without touching `main.al`.
+The `script` array is the actual startup sequence — each string is an AnyLog command executed in order. This means 
+**you can change what runs at startup by editing this policy**, without touching `main.al`.
 
 To view the config policy for a running node:
 ```anylog
