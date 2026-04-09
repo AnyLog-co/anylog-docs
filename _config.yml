@@ -95,3 +95,8 @@ nav:
   - slug: mcp
     title: MCP & AI Integration
     file: Tools & UI/mcp.md
+- title: _docs
+  items:
+  - slug: CHANGELOG
+    title: Changelog
+    file: _docs/CHANGELOG.md

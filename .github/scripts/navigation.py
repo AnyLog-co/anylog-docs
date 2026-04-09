@@ -29,5 +29,8 @@ ITEM_ORDER = {
     "Tools & UI": [
         "remote-gui",
         "mcp"
+    ],
+    "VERSION CONTROL":[
+        "CHANGELOG"
     ]
 }
