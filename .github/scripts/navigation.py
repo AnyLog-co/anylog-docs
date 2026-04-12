@@ -2,35 +2,60 @@ ITEM_ORDER = {
     "Getting Started": [
         "getting-started",
         "installing-anylog",
-        "deployment-scripts"
+        "install-ova",
+        "anylog-as-service",
+        "deployment-scripts",
+    ],
+    "CLI": [
+        "AnyLog-CLI",
+        "node-status",
+        "get-cmds",
     ],
     "Network & Services": [
         "background-services",
-        "blockchain"
+        "network-configurations",
+        "blockchain",
+        "policies-metadata",
     ],
     "Managing Data (Southbound)": [
+        "southbound-overview",
         "data-ingestion",
         "opcua",
         "grpc",
         "node-red",
         "syslog",
         "video-streaming",
-        "live-data-generator"
+        "live-data-generator",
+        "edgex",
     ],
     "Querying Data (Northbound)": [
+        "northbound-overview",
         "queries",
+        "sql-setup",
         "using-rest",
-        "grafana"
+        "grafana",
+        "import-grafana-dashboard",
+        "PowerBI",
+        "Qlik",
+        "Google",
+        "postgres-connector",
+        "notification",
+        "node-red",
     ],
     "Monitoring & Operations": [
+        "node-monitoring",
         "aggregations",
-        "high-availability"
+        "high-availability",
     ],
     "Tools & UI": [
+        "mcp",
         "remote-gui",
-        "mcp"
     ],
-    "VERSION CONTROL":[
-        "CHANGELOG"
-    ]
+    "Version Control": [
+        "SOURCE-CHANGELOGS",
+        "SCRIPTS-CHANGELOGS",
+    ],
+    "Reference": [
+        "FAQ",
+    ],
 }
