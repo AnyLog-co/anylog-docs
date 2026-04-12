@@ -2,47 +2,33 @@
 
 Technical documentation for [AnyLog Edge Data Fabric](https://www.anylog.network/), built with Jekyll and hosted on GitHub Pages.
 
+--- 
+
+## Goal
+ 
+Build a proper documentation website at **https://anylog.network/docs** using Jekyll (same theme as OpenHorizon), replacing 
+raw GitHub repo access with a structured, navigable site comparable to EdgeX or ReadTheDocs.
+ 
 ---
-
-## Local Development with Docker
-
-The easiest way to preview the docs locally is via Docker — no Ruby or Jekyll installation required.
-
-**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-
-```bash
-git clone https://github.com/AnyLog-co/anylog-docs.github.io.git
-cd anylog-docs.github.io
-docker compose up -d
-```
-
-Once running, open your browser to **http://localhost:4000**.
-
-The container mounts your local `_docs/` directory, so edits are reflected live — no restart needed. To stop:
-
-```bash
-docker compose down
-```
-
-**Troubleshooting:** If the container exits immediately with a bundle write permissions error (`There was an error while trying to write to /srv/bundle`), run:
-
-```bash
-docker compose down -v
-docker compose up -d
-```
-
-The `-v` flag removes the cached volume so it gets recreated with the correct permissions.
+ 
+## Source repositories
+ 
+| Repo | Purpose | Status |
+|---|---|---|
+| **https://github.com/AnyLog-co/documentation** | Old docs — ~279 files, comprehensive but unorganised, not a website | Source of truth for migration |
+| **EdgeLake documentation site** | Ori's first Jekyll attempt — limited, semi-organised | To be deprecated |
+| **https://github.com/AnyLog-co/anylog-docs.github.io** (branch: `os-dev`) | New Jekyll site — active development | Work in progress |
 
 ---
 
 ## Adding or Updating Content
 
-### 1. Create or edit a page
+1. Create or edit a page
 
 All documentation lives in the `_docs/` directory. Create a new Markdown file or edit an existing one:
 
 ```
-_docs/my-topic.md
+_docs/<general-topic>/<specific-topic>.md
 ```
 
 Every file **must** begin with this front matter block — the `title` field drives the Table of Contents:
@@ -147,4 +133,35 @@ The following is a real example using `remote-gui.md`. Copy and adapt it for any
 
 ---
 
-Adjust the URLs, front matter, and the description of changes to match whatever page you are working on.
+Adjust the URLs, front matter, and the description of changes to match whatever page you are working on. 
+
+---
+
+## Local Development with Docker
+
+The easiest way to preview the docs locally is via Docker — no Ruby or Jekyll installation required.
+
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+
+```bash
+git clone https://github.com/AnyLog-co/anylog-docs.github.io.git
+cd anylog-docs.github.io
+docker compose up -d
+```
+
+Once running, open your browser to **http://localhost:4000**.
+
+The container mounts your local `_docs/` directory, so edits are reflected live — no restart needed. To stop:
+
+```bash
+docker compose down
+```
+
+**Troubleshooting:** If the container exits immediately with a bundle write permissions error (`There was an error while trying to write to /srv/bundle`), run:
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+The `-v` flag removes the cached volume so it gets recreated with the correct permissions.
