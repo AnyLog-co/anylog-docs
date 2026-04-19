@@ -109,6 +109,9 @@ nav:
   - slug: southound-overview
     title: Data Ingestion (Southbound)
     file: Managing Data (Southbound)/southound-overview.md
+  - slug: using-kafka
+    title: null
+    file: Managing Data (Southbound)/using-kafka.md
 - title: Querying Data (Northbound)
   items:
   - slug: northbound-overview
