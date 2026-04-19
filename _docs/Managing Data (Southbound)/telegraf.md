@@ -1,199 +1,105 @@
 ---
 title: Telegraf
-description: How to utilize Telegraf with generic mapping policies 
+description: How to publish Telegraf metrics into AnyLog via MQTT or REST
 layout: page
 ---
+
 <!--
 ## Changelog
-- 2026-04-17 | Created new document explaining mapping with the use of Telegraf
+- 2026-04-17 | Created document
+- 2026-04-18 | Simplified to Telegraf setup only; mapping details moved to mapping-policies.md
 -->
-
 
 # Telegraf
 
-<a href="https://www.influxdata.com/time-series-platform/telegraf/" target="_blank">Telegraf</a> is _InfluxData_'s tool to
-connect between southbound services (ex. system logs) and the storage layer. 
+<a href="https://www.influxdata.com/time-series-platform/telegraf/" target="_blank">Telegraf</a> is _InfluxData_'s 
+open-source agent for collecting, processing, and forwarding metrics and events. It connects southbound data sources — 
+system logs, hardware sensors, applications — to a storage or analytics layer.
 
-When Telegraf publishes metric data to an AnyLog node, AnyLog needs to know how to interpret the incoming JSON payload — 
-which database and table to target, and how to extract the right fields from each message. This is handled by a 
-**mapping policy**: a JSON structure stored in AnyLog's shared metadata layer that defines the full source-to-destination 
-transformation.
+This page covers how to configure Telegraf to publish metrics into AnyLog over MQTT. A REST alternative is included 
+in the config but commented out. For details on how AnyLog interprets and stores the incoming data, see 
+[Mapping Policies](mapping-policies.md).
 
-Mapping policies let you:
-- Rename or reformat incoming fields to match your table schema
-- Apply type coercions (e.g. string → timestamp, string → decimal)
-- Set fallback defaults when a field is missing
-- Conditionally route data to different tables based on payload content
+---
 
+## How It Works
 
-## What is a mapping policy 
+Telegraf collects metrics from input plugins (CPU, memory, network, etc.) and forwards them as JSON payloads to 
+AnyLog's local message broker. Because Telegraf metrics vary in structure across input plugins — different field 
+names, value types, and tags — AnyLog uses a **wildcard mapping policy** that dynamically infers column names and 
+types from each payload rather than requiring a rigid per-column schema.
 
-Publishing data into AnyLog via (REST) POST or MQTT allows the user to correlate the JSON content with the database
-table and column names to be used - ie mapping. 
+The table name is derived from the metric name and host tag, so each Telegraf input lands in its own table 
+automatically.
 
-AnyLog maps incoming JSON data to relational tables using mapping policies — JSON structures stored in the shared 
-metadata layer. Each policy defines the source-to-destination transformation, specifying the target database, table, 
-and schema.
+---
 
-Source data arrives in one of two shapes: flat key-value pairs (e.g., London Air Quality data), or a list of 
-dictionaries where each entry is a reading. The core extraction mechanism is the _bring_ command, which pulls values 
-from the source JSON and optionally transforms them. Mapping policies can be linked to data either directly via the run 
-mqtt client command or by referencing a stored policy by ID.
+## Setup
 
-This can be done in a hardcoded fashion or relative referencing. 
+### 1. Deploy an AnyLog Operator Node
 
-### Hardcoded Mapping 
+Deploy an AnyLog operator node with a local message broker enabled. See 
+[background processes](../background-processes.md#operator-process) for configuration details.
 
-A mapping policy has the following top-level keys:
+### 2. Attach to the AnyLog Node
 
-| Key | Required | Purpose | 
-|:---:| :---: | :---: | 
-| id  | Yes | Unique policy identifier | 
-| dbms | Yes | Target logical database | 
-| table | Yes | Target table name | 
-| readings | Yes - but could be empty | Key pointing to a list of readings in the source JSON | 
-| condition | No | if statement to conditionally apply the policy  | 
-| schema | Yes | Column definitions and mapping instructions | 
-    
+Connect to the AnyLog CLI on your operator node.
 
-Each column in the schema is a dictionary with a bring expression (to extract the value), a type (string, integer, 
-float, timestamp, bool, varchar, char), an optional condition, and an optional default fallback.
+### 3. Register the Mapping Policy
 
-For blob data (images, video), additional keys like blob, extension, apply (e.g. base64 decoding), and hash extend the 
-schema to route large objects to a dedicated object store while keeping a reference ID in the relational table.
-
-
-#### Example
-
-Lets take the example from [southbound overview](southound-overview.md#knowing-your-topics-and-schemas)
-
-```anylog
-<run msg client where
-  broker = mqtt.mycompany.com and port = 1883 and
-  topic = (
-    name = sensors and
-    dbms = my_data and
-    table = temperature_readings and
-    column.timestamp.timestamp = "bring [timestamp]" and
-    column.device_name.str = "bring [device]" and
-    column.value.float = "bring [temperature]"
-  )>
-```
-
-A correlating alternative would be to use a mapping policy
-```anylog
-{
-    "mapping": {
-        "id": "sensors",
-        "dbms": "my_data",
-        "table": "temperature_readings",
-        "readings": "", 
-        "schema": {
-            "timestamp": {
-                "type": "timestamp", 
-                "default": "now()",
-                "bring": "[timestamp]"
-            },
-            "device_name": {
-                "type": "string", 
-                "default": "",
-                "bring": ["device]"
-            },
-            "value": {
-                "type": "float", 
-                "default": null,
-                "bring": "[value]"
-            }
-        }
-    }
-}
-```
-
-```
-<run msg client where
-  broker = mqtt.mycompany.com and port = 1883 and
-  topic = (
-    name = sensors and 
-    policy = sensors
-  )>    
-```
-
-## Publishing to AnyLog via Telegarf 
-
-[missing intro - explaining how we do not know the data type or actual data thus are able to use "*" as an alternative]
-
-### Steps 
-
-The following provides step by step instructions on how to deploy Telegraf (via Docker) that publishes data into AnyLog  
-via MQTT. The same can be replicated via REST as well. 
-
-**Define an AnyLog Setup**
-
-1. Define an AnyLog (operator) node to accept the data that has a local message broker 
-
-2. Attach to the AnyLog node 
-
-3. define the mapping policy
 ```anylog
 policy_id = telegraf-mapping
 
-<new_policy = {"mapping" : {
-        "id" : !policy_id,
-        "dbms" : !default_dbms,
-        "table" : "bring [metrics][0][name] _ [metrics][0][tags][name]:[metrics][0][tags][host]",
-        "readings" : "metrics",
-        "schema" : {
-                "timestamp" : {
-                    "type" : "timestamp",
-                    "default": "now()",
-                    "bring" : "[timestamp]",
-                    "apply" :  "epoch_to_datetime"
-                },
-                "*" : {
-                    "type": "*",
-                    "bring": ["fields", "tags"]
-                }
-         }
-   }
-}>
+<new_policy = {"mapping": {
+    "id": !policy_id,
+    "dbms": !default_dbms,
+    "table": "bring [name]",
+    "readings": "",
+    "schema": {
+        "timestamp": {
+            "type": "timestamp",
+            "default": "now()",
+            "bring": "[timestamp]",
+            "apply": "epoch_to_datetime"
+        },
+        "*": {
+            "type": "*",
+            "bring": ["fields", "tags"]
+        }
+    }
+}}>
 
 blockchain insert where policy=!new_policy and local=true and master=!ledger_conn
 ```
 
-4. Initiate the message client to accept data from Telegraf via local
-```shell
-topic_name = telegraf 
+The `"*"` schema entry tells AnyLog to extract all keys from the `fields` and `tags` objects and create columns 
+for them dynamically, inferring each type from the value. One policy handles all Telegraf inputs.
+
+### 4. Start the Message Client
+
+```anylog
+topic_name = telegraf
 
 <run msg client where broker=local and port=!anylog_broker_port and log=false and topic=(
     name=!topic_name and
     policy=!policy_id
 )>
-
-
 ```
 
-Steps 3 and 4 can be executed as one by running <code>process <a herf="https://github.com/AnyLog-co/deployment-scripts/blob/os-dev/sample-scripts/telegraf.al" target="_blank">!local_scripts/demo-scripts/telegraf.al</a></code>
+> Steps 3 and 4 can be run together:  
+> <code>process <a href="https://github.com/AnyLog-co/deployment-scripts/blob/os-dev/sample-scripts/telegraf.al" target="_blank">`!local_scripts/demo-scripts/telegraf.al`</a></code>
 
-**Start Telegraf with MQTT**
+### 5. Configure Telegraf
 
-1. Define Telegraf's configuration file - named `telegraf.conf`
+Create a `telegraf.conf` file:
 
-| Service Type |            Service           |
-| :---: |:----------------------------:| 
-| Input |              CPU             | 
-| Input |             swap             | 
-| Input |              mem             | 
-| Input |              net             | 
-| Output |             MQTT             |
-| Output | REST - commented out example |
-
-```editorconfig
+```toml
 [agent]
   interval = "5s"
   flush_interval = "5s"
 
 # -----------------------
-# INPUTS (what Telegraf collects)
+# INPUTS
 # -----------------------
 
 [[inputs.cpu]]
@@ -207,39 +113,35 @@ Steps 3 and 4 can be executed as one by running <code>process <a herf="https://g
 [[inputs.net]]
 
 # -----------------------
-# OUTPUT (MQTT)
+# OUTPUT: MQTT
 # -----------------------
 
 [[outputs.mqtt]]
-  servers = ["tcp://192.168.65.3:32150"]  # use your broker
+  servers = ["tcp://192.168.65.3:32150"]  # replace with your broker address
   topic = "telegraf"
   qos = 1
-
   data_format = "json"
-
-  ## IMPORTANT: this gives you the structure similar to what you showed
   json_timestamp_units = "1s"
 
-[[outputs.http]]
-#   url = "http://192.168.65.3:32149"   # your REST endpoint
+# -----------------------
+# OUTPUT: REST (alternative)
+# -----------------------
+
+# [[outputs.http]]
+#   url = "http://192.168.65.3:32149"
 #   method = "POST"
-# 
-#   ## Headers (this matches your rest_post function)
-#   headers = {
-#     "command" = "data",
-#     "topic" = "telegraf",
-#     "User-Agent" = "AnyLog/1.23",
-#     "Content-Type" = "application/json"
-#   }
-# 
-#   ## Data format
+#
+#   [outputs.http.headers]
+#     command = "data"
+#     topic = "telegraf"
+#     User-Agent = "AnyLog/1.23"
+#     Content-Type = "application/json"
+#
 #   data_format = "json"
-# 
-#   ## Timestamp format (seconds like your earlier examples)
 #   json_timestamp_units = "1s"
 ```
 
-2. Telegraf
+### 6. Start Telegraf
 
 ```shell
 docker run --rm \
@@ -247,12 +149,108 @@ docker run --rm \
   telegraf
 ```
 
+---
 
-**Validation**
+## Validation
+Once Telegraf is running, use the following AnyLog commands to verify data is flowing correctly through each stage 
+of the pipeline:
 
-From within AnyLog users can validate using some standard commands
+* `get msg client` - Confirms messages are being received on the topic; shows message counts per policy
+```anylog
+AL anylog-standalone-operator > get msg client 
 
-* `get msg client` - view messages are accepted 
-* `get streaming` - view how data is broken up into tables 
-* `get operator` - view data once it has been processed 
+Subscription ID: 0001
+User:         unused
+Broker:       local
+Connection:   Connected to local Message Server
+
+     Messages    Success     Errors      Last message time    Last error time      Last Error
+     ----------  ----------  ----------  -------------------  -------------------  ----------------------------------
+           6636        6635           1  2026-04-18 00:11:09  2026-04-17 23:52:18  File move to watch dir failed
+
+     Subscribed Topics:
+     Topic         Dynamic QOS DBMS Table Column name Column Type Mapping Function Optional                                                          Policies
+     -------------|-------|---|----|-----|-----------|-----------|----------------|-----------------------------------------------------------------|--------|
+     telegraf-data|      0|   |    |     |           |           |                |blockchain get (mapping,transform) where [id] == telegraf-mapping|
+```
+
+* `get streaming` - Shows how incoming data is being split across tables; useful for verifying wildcard column expansion
+```anylog
+AL anylog-standalone-operator > get streaming 
+
+Statistics
+            Put    Put     Streaming Streaming Cached Counter    Threshold   Buffer   Threshold  Time Left Last Process
+DBMS-Table  files  Rows    Calls     Rows      Rows   Immediate  Volume(KB)  Fill(%)  Time(sec)  (Sec)     HH:MM:SS
+-----------|------|-----|-|---------|---------|------|----------|-----------|--------|----------|---------|------------|
+mydb.mem   |     0|    0| |      557|      557|     7|       524|         10|   69.73|        60|       39|00:00:06    |
+mydb.swap  |     0|    0| |    1,077|    1,077|    27|       916|         10|   32.91|        60|       38|00:00:06    |
+mydb.net   |     0|    0| |      534|      534|    20|       464|         10|   57.86|        60|       22|00:00:06    |
+mydb.cpu   |     0|    0| |    4,806|    4,806|    28|     4,230|         10|   94.68|        60|       53|00:00:06    |
+```
+
+* `get operator` - Confirms data has been processed and written to the database
+```shell
+AL anylog-standalone-operator > get operator 
+
+Stats: OPERATOR JSON
+DBMS Table Files Immediate Timestamp  Elapsed_time
+----|-----|-----|---------|----------|------------|
+mydb|mem  |    2|       47|1776471116|00:00:22    |
+    |cpu  |   20|      146|1776471131|00:00:07    |
+    |swap |    2|       18|1776471116|00:00:22    |
+    |net  |    2|       18|1776471100|00:00:38    |
+
+
+Stats: OPERATOR SQL
+DBMS Table                                Files Immediate Timestamp  Elapsed_time
+----|------------------------------------|-----|---------|----------|------------|
+mydb|mem.2026_04_01_d14_insert_timestamp |    2|        0|1776469958|00:19:40    |
+    |cpu.2026_04_01_d14_insert_timestamp |   20|        0|1776469970|00:19:28    |
+    |net.2026_04_01_d14_insert_timestamp |    2|        0|1776469985|00:19:13    |
+    |swap.2026_04_01_d14_insert_timestamp|    2|        0|1776470001|00:18:57    |
+
+
+Stats: OPERATOR INSERTS
+DBMS Table First insert Last insert Batch inserts Immediate inserts DBMS Seconds
+----|-----|------------|-----------|-------------|-----------------|------------|
+mydb|mem  |00:19:56    |00:00:07   |           22|              524|       7.330|
+    |cpu  |00:19:41    |00:00:07   |          576|             4230|      58.280|
+    |swap |00:19:41    |00:00:07   |          161|              916|      12.757|
+    |net  |00:19:40    |00:00:07   |           70|              464|       6.211|
+
+
+Stats: OPERATOR ERROR
+Type        Counter Timestamp Elapsed time Dbms name Table name Last error Last error text
+-----------|-------|---------|------------|---------|----------|----------|---------------|
+JSON Errors|      0|        0|00:00:00    |         |          |         0|               |
+SQL Errors |      0|        0|00:00:00    |         |          |         0|               |
+
+```
+
+* To query the ingested data directly:
+```anylog
+
+AL anylog-standalone-operator > run client () sql !default_dbms format=table "select * from cpu limit 10"
+
+row_id insert_timestamp           tsd_name tsd_id timestamp             fields_usage_guest fields_usage_guest_nice fields_usage_idle fields_usage_iowait fields_usage_irq fields_usage_nice fields_usage_softirq fields_usage_steal fields_usage_system fields_usage_user tags_cpu tags_host
+------ -------------------------- -------- ------ --------------------- ------------------ ----------------------- ----------------- ------------------- ---------------- ----------------- -------------------- ------------------ ------------------- ----------------- -------- ------------
+     1 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0 99.79959919835603                 0.0                0                 0                    0                  0 0.20040080160310225               0.0 cpu0     e105d03c4ac6
+     2 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0  99.7995991984288 0.20040080160324836                0                 0                    0                  0                 0.0               0.0 cpu1     e105d03c4ac6
+     3 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0  99.7995991984288 0.20040080160324836                0                 0                    0                  0                 0.0               0.0 cpu1     e105d03c4ac6
+     4 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0 99.79959919842894                 0.0                0                 0                    0                  0 0.20040080160310225               0.0 cpu2     e105d03c4ac6
+     5 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0 99.79959919842894                 0.0                0                 0                    0                  0 0.20040080160310225               0.0 cpu2     e105d03c4ac6
+     6 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0             100.0                 0.0                0                 0                    0                  0                 0.0               0.0 cpu3     e105d03c4ac6
+     7 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0             100.0                 0.0                0                 0                    0                  0                 0.0               0.0 cpu3     e105d03c4ac6
+
+row_id insert_timestamp           tsd_name tsd_id timestamp             fields_usage_guest fields_usage_guest_nice fields_usage_idle fields_usage_iowait fields_usage_irq fields_usage_nice fields_usage_softirq fields_usage_steal fields_usage_system fields_usage_user tags_cpu tags_host
+------ -------------------------- -------- ------ --------------------- ------------------ ----------------------- ----------------- ------------------- ---------------- ----------------- -------------------- ------------------ ------------------- ----------------- -------- ------------
+     8 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0             100.0                 0.0                0                 0                    0                  0                 0.0               0.0 cpu4     e105d03c4ac6
+     9 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0             100.0                 0.0                0                 0                    0                  0                 0.0               0.0 cpu4     e105d03c4ac6
+    10 2026-04-17 23:52:37.875177        5     22 2026-04-17 23:50:41.0                  0                       0             100.0                 0.0                0                 0                    0                  0                 0.0               0.0 cpu5     e105d03c4ac6
+
+{"Statistics":[{"Count": 10,
+                "Time":"00:00:00",
+                "Nodes": 1}]}
+```
+
 

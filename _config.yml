@@ -73,9 +73,15 @@ nav:
   - slug: data-ingestion
     title: Data Ingestion
     file: Managing Data (Southbound)/data-ingestion.md
+  - slug: mapping-policies
+    title: Mapping Policies
+    file: Managing Data (Southbound)/mapping-policies.md
   - slug: opcua
     title: OPC-UA
     file: Managing Data (Southbound)/opcua.md
+  - slug: telegraf
+    title: Telegraf
+    file: Managing Data (Southbound)/telegraf.md
   - slug: etherip
     title: EtherNet/IP
     file: Managing Data (Southbound)/etherip.md
