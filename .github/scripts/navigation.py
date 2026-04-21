@@ -14,6 +14,7 @@ ITEM_ORDER = {
     "Network & Services": [
         "background-services",
         "network-configurations",
+        "messaging-services",
         "blockchain",
         "policies-metadata",
     ],
@@ -28,6 +29,7 @@ ITEM_ORDER = {
         "etherip",
         "grpc",
         "node-red",
+        "node-monitoring",
         "syslog",
         "video-streaming",
         "live-data-generator",

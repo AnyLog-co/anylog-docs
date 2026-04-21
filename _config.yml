@@ -62,6 +62,9 @@ nav:
   - slug: network-configurations
     title: Network Configuration
     file: Network & Services/network-configurations.md
+  - slug: messaging-services
+    title: Messaging Service
+    file: Network & Services/messaging-services.md
   - slug: blockchain
     title: Blockchain & Metadata
     file: Network & Services/blockchain.md
@@ -97,6 +100,9 @@ nav:
   - slug: node-red
     title: Node-RED
     file: Managing Data (Southbound)/node-red.md
+  - slug: node-monitoring
+    title: Node Monitoring
+    file: Managing Data (Southbound)/node-monitoring.md
   - slug: syslog
     title: Syslog
     file: Managing Data (Southbound)/syslog.md
