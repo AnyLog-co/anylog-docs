@@ -1,4 +1,13 @@
-# Using Kafka
+---
+title: Kafka
+description: How to publish and receive content from Kafka into AnyLog 
+layout: page
+---
+
+<!--
+## Changelog
+- 2026-04-17 | Created document
+--> 
 
 ## Overview
 

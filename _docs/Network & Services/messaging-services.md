@@ -3,6 +3,10 @@ title: Messaging Service
 description: The AnyLog Messaging service is a dedicated network port that accepts data from MQTT, Kafka, Syslog, and REST — the unified southbound ingestion endpoint.
 layout: page
 ---
+<!--
+## Changelog
+- 2026-04-17 | Created document
+--> 
 
 Every AnyLog node exposes three network services: **TCP** (peer-to-peer), **REST** (external API), and **Messaging** — a dedicated port that acts as a unified southbound ingestion endpoint. The Messaging service is started with `run message broker` and appears alongside TCP and REST in `get connections`.
 
