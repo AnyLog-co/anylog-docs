@@ -59,7 +59,7 @@ automatically generates a UNS hierarchy from it.
     user = anyloguser and password = mqtt4AnyLog! and
     master_node = !ledger_conn and log = false and
     topic = (
-        name = Enterprise C/tff/# and
+        name = "vessel-data/DLT/#" and
         dbms = !default_dbms and
         dynamic = true
     )>
@@ -68,6 +68,99 @@ automatically generates a UNS hierarchy from it.
 In the example above, the `#` wildcard subscribes to all topics under `Enterprise C/tff/`. Each arriving 
 message — for example `Enterprise C/tff/PCV7X_percent` with value `100` — is stored directly using the topic 
 path as the namespace address, with no mapping policy required.
+
+### Example: ProveIt virtual factory (authenticated MQTT)
+
+The **ProveIt** demo MQTT broker **`virtualfactory.proveit.services`** exposes read-only credentials. Point **`master_node`** at your AnyLog master (here **`192.168.1.88:32048`**). Use **`dynamic=true`** on topic **`Enterprise B/Metric/input/#`** and logical DBMS **`new_company_b`** (connect that DBMS on the operator before starting the client, if needed).
+
+```anylog
+<run msg client where
+    broker = virtualfactory.proveit.services and port = 1883 and
+    user = proveitreadonly and password = proveitreadonlypassword and
+    master_node = !ledger_conn and
+    topic = (
+        name = "Enterprise B/Metric/input/#" and
+        dbms = new_company_b and
+        dynamic = true
+    )>
+```
+
+### Example: Mosquitto (dev) on a LAN broker
+
+[Mosquitto](https://mosquitto.org/) is a common MQTT broker for local development. In this pattern, Mosquitto listens on **`192.168.1.88:1883`**, and the AnyLog **master** (ledger) is reachable at **`192.168.1.88:32048`**. Connect the logical DBMS on the operator, then start the message client with **`dynamic=true`** so topic paths under **`M2/PL1/`** drive auto-generated UNS and storage under **`new_company`**.
+
+```anylog
+connect dbms new_company where type = sqlite
+```
+
+```anylog
+<run msg client where
+    broker = 192.168.1.88 and port = 1883 and
+    master_node = !ledger_conn and
+    topic = (
+        name = M2/PL1/# and
+        dbms = new_company and
+        dynamic = true
+    )>
+```
+
+With the [Mosquitto clients](https://mosquitto.org/download/) installed, you can publish scalar payloads to the same broker for testing (`-m` is the message body, `-t` is the topic):
+
+```bash
+mosquitto_pub -p 1883 -h 192.168.1.88 -m 98.3 -t M2/PL1/DEV1/power
+mosquitto_pub -p 1883 -h 192.168.1.88 -m 1 -t M2/PL1/DEV1/active
+mosquitto_pub -p 1883 -h 192.168.1.88 -m "stopped" -t M2/PL1/DEV1/status
+```
+
+On the operator, **`get msg client`** shows the subscription, message counters, and how **`dynamic=true`** materialized topics into tables under **`new_company`**:
+
+```text
+AL op1 > get msg client
+
+Subscription ID: 0001
+User:         unused
+Broker:       192.168.1.88:1883
+Connection:   Connected
+     Messages    Success     Errors      Last message time    Last error time      Last Error
+     ----------  ----------  ----------  -------------------  -------------------  ----------------------------------
+             32          32           0  2026-04-22 13:41:43
+
+     Subscribed Topics:
+     Topic                Dynamic QOS DBMS        Table      Column name Column Type Mapping Function Optional Policies
+     --------------------|-------|---|-----------|----------|-----------|-----------|----------------|--------|--------|
+     M2/PL1/#            |True   |  0|new_company|          |           |           |                |        |        |
+     M2/PL1/DEV1         |True   |  0|new_company|dev1_1    |           |           |                |        |        |
+     M2/PL1/DEV1/power   |True   |  0|new_company|power_1   |           |           |                |        |        |
+     M2/PL1/DEV1/active  |True   |  0|new_company|active_1  |           |           |                |        |        |
+     M2/PL1/DEV1/status  |True   |  0|new_company|status_1  |           |           |                |        |        |
+     M2/PL1/DEV1/altitude|True   |  0|new_company|altitude_1|           |           |                |        |        |
+
+AL op1 >
+```
+
+**`get streaming`** shows streaming statistics for the same dynamic tables (rows staged, buffer fill, time until the next process cycle):
+
+```text
+AL op1 > get streaming
+
+
+Statistics
+                       Put    Put     Streaming Streaming Cached Counter    Threshold   Buffer   Threshold  Time Left Last Process
+DBMS-Table             files  Rows    Calls     Rows      Rows   Immediate  Volume(KB)  Fill(%)  Time(sec)  (Sec)     HH:MM:SS
+----------------------|------|-----|-|---------|---------|------|----------|-----------|--------|----------|---------|------------|
+new_company.power_1   |     0|    0| |       17|       17|     0|         0|         10|     0.0|        10|       10|00:01:19    |
+new_company.active_1  |     0|    0| |        3|        3|     0|         0|         10|     0.0|        10|       10|00:06:33    |
+new_company.status_1  |     0|    0| |        2|        2|     0|         0|         10|     0.0|        10|       10|00:07:00    |
+new_company.altitude_1|     0|    0| |       10|       10|     0|         0|         10|     0.0|        10|       10|00:01:16    |
+
+AL op1 >
+```
+
+In the **Remote GUI**, the same dynamic hierarchy appears as a drill-down tree — for example **`Root / m2 / pl1 / dev2`** with leaves such as **`altitude`**, **`power`**, and **`temperature`**. **Item Details** shows recent scalar samples and a chart for the selected metric. Hovering a leaf surfaces the **`uns`** policy: **`namespace`** (for example **`m2/pl1/dev2/altitude`**), **`dbms`** (**`new_company`**), **`table`** (**`altitude_2`**), and **`source_node`** (**`op1@192.168.1.88:32148`**), consistent with ingestion from the operator on **`192.168.1.88`**.
+
+<img src="../../assets/img/uns_dynamic_item_details.png" alt="Dynamic UNS in the web UI: tree m2/pl1/dev2, Item Details for temperature, policy tooltip on altitude" width="75%" />
+
+The **`#`** multi-level wildcard subscribes to every topic under `M2/PL1/` (for example `M2/PL1/temperature` with a scalar payload). Replace host, ports, topic prefix, **`dbms`**, and **`master_node`** with the values for your environment (you can use **`master_node = !ledger_conn`** if that is already set in the dictionary).
 
 | Mode | Input format | Schema required | UNS generated |
 |:---|:---:|:---:|:---:|
