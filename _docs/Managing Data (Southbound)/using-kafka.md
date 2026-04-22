@@ -7,6 +7,7 @@ layout: page
 <!--
 ## Changelog
 - 2026-04-17 | Created document
+- 2026-04-22 | Massimiliano review 
 --> 
 
 ## Overview
@@ -71,19 +72,19 @@ run kafka consumer where ip = 198.74.50.131 and port = 9092 and reset = latest a
 
 Use this flow when you need a **local** Kafka broker for tests (for example mapping `run kafka consumer` to a topic).
 
-#### 1) Run a Kafka container
+1. Run a Kafka container
 
 ```bash
 docker run -d --rm --name kafka-dev -p 9092:9092 apache/kafka:latest
 ```
 
-#### 2) Check logs
+2. Check logs
 
 ```bash
 docker logs -f kafka-dev
 ```
 
-#### 3) Stop / remove
+3. Stop / remove
 
 ```bash
 docker stop kafka-dev
@@ -92,7 +93,7 @@ docker rm -f kafka-dev
 
 *(If you used `--rm` on `docker run`, the container is removed when it stops; `docker rm -f` is only needed if the name is still reserved.)*
 
-#### 4) Create topic `test`
+4. Create topic `test`
 
 Use **`localhost:9092`** for `--bootstrap-server` when the Kafka CLI runs **inside** the `kafka-dev` container (`docker exec` on the machine where that container runs). If you run the same kind of command **from another host on the LAN** and reach the broker over the network, use the **broker machine’s LAN IP and port** instead — for example **`192.168.1.101:9092`** (replace with the real address where port `9092` is published).
 
@@ -105,7 +106,7 @@ docker exec kafka-dev /opt/kafka/bin/kafka-topics.sh \
   --topic test --partitions 1 --replication-factor 1
 ```
 
-#### 5) Send a message to topic `test`
+5. Send a message to topic `test`
 
 Example payload:
 
@@ -128,7 +129,7 @@ docker exec -i kafka-dev /opt/kafka/bin/kafka-console-producer.sh \
   --topic test
 ```
 
-#### 6) Verify messages (read from beginning)
+6. Verify messages (read from beginning)
 
 Use a **new** consumer group and `auto.offset.reset=earliest` so you do not inherit an old committed offset. Again: **`localhost`** inside `docker exec`, or **`192.168.1.101`** from another LAN client.
 
@@ -143,7 +144,7 @@ docker exec kafka-dev /opt/kafka/bin/kafka-console-consumer.sh \
   --max-messages 5
 ```
 
-#### 7) Prepare Kafka consumer in AnyLog with one destination table only
+7. Prepare Kafka consumer in AnyLog with one destination table only
 
 Issue **`run kafka consumer`** on an **operator** node: the node that runs the **operator** process and hosts the destination **`dbms`** / table where Kafka rows are written.
 
@@ -180,7 +181,7 @@ One topic → one table (adjust **`column.*`** to match your JSON keys):
 >
 ```
 
-#### 8) Check configuration mapping
+8. Check configuration mapping
 
 On the operator CLI (e.g. **`AL op1 >`**), confirm the Kafka subscription and how each topic maps to **`dbms`**, **`table`**, and **`column.*`**:
 
@@ -208,7 +209,7 @@ Connection:   Kafka Consumer
           |False  |   |           |          |deviceid   |str        |['[deviceID]']  |False   |        |
 ```
 
-#### 9) Send new messages
+#### Send new messages
 
 From the host, pipe JSON into the Kafka producer (use your running container name or ID from `docker ps`, e.g. **`kafka-dev`**):
 
@@ -219,7 +220,7 @@ docker exec -i kafka-dev /opt/kafka/bin/kafka-console-producer.sh \
   --topic test
 ```
 
-#### 10) Verify data are being received
+#### Verify data are being received
 
 On the operator AnyLog CLI (example prompt **`AL op1 >`**), check streaming counters for the destination table:
 
@@ -237,7 +238,7 @@ DBMS-Table             files  Rows    Calls     Rows      Rows   Immediate  Volu
 new_company.kafka_demo|     0|    0| |       16|       16|     0|         0|         10|     0.0|        10|       10|00:01:41    |
 ```
 
-#### 11) Read data
+#### Read data
 
 Query the destination table on the same node:
 
@@ -299,7 +300,7 @@ docker exec kafka-dev /opt/kafka/bin/kafka-topics.sh \
   --replication-factor 1
 ```
 
-#### 2) Map topic `stream1` to dynamic table names from `deviceID`
+#### Map topic `stream1` to dynamic table names from `deviceID`
 
 Subscribe so each row’s **`deviceID`** becomes part of the table name (prefix **`kafka_stream_`** + value of **`deviceID`**):
 
