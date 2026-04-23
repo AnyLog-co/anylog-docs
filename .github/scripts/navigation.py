@@ -59,8 +59,9 @@ ITEM_ORDER = {
         "remote-gui",
     ],
     "Version Control": [
-        "SOURCE-CHANGELOGS",
         "SCRIPTS-CHANGELOGS",
+        "DEPLOYMENT_SCRIPTS-CHANGELOGS",
+        "DOCKER_COMPOSE-CHANGELOG"
     ],
     "Reference": [
         "FAQ",

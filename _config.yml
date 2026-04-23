@@ -177,12 +177,15 @@ nav:
     file: Tools & UI/remote-gui.md
 - title: Version Control
   items:
+  - slug: DEPLOYMENT_SCRIPTS-CHANGELOGS
+    title: Deployment Scripts (Changelog)
+    file: Version Control/DEPLOYMENT_SCRIPTS-CHANGELOGS.md
+  - slug: DOCKER_COMPOSE-CHANGELOG
+    title: Changelog
+    file: Version Control/DOCKER_COMPOSE-CHANGELOG.md
   - slug: SOURCE-CHANGELOGS
     title: AnyLog's Source Code (Changelog)
     file: Version Control/SOURCE-CHANGELOGS.md
-  - slug: SCRIPTS-CHANGELOGS
-    title: Deployment Scripts (Changelog)
-    file: Version Control/SCRIPTS-CHANGELOGS.md
 - title: Reference
   items:
   - slug: FAQ
