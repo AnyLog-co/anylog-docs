@@ -9,8 +9,6 @@ layout: page
 - 2026-04-22 | Initial UNS_custom example (data_stream_isa95 root, stream1, d1/d2 devices)
 -->
 
-# Custom UNS (data stream, ISA-95)
-
 This page records an end-to-end pattern: define **`uns`** policy dictionaries, insert them on the blockchain with **`blockchain insert`**, then verify with **`blockchain get uns`**. Parent IDs from earlier inserts are reused for child policies.
 
 For the broader UNS model (including auto-generated MQTT with **`dynamic=true`**), see [Unified Namespace](UNS.md).

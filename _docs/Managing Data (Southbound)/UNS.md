@@ -42,7 +42,7 @@ The UNS structure can follow a rigid standard like <a href="https://www.isa.org/
 or a more flexible project-defined hierarchy. Because AnyLog treats the UNS as a type of metadata, both approaches can 
 coexist — a dynamically generated namespace can be extended or paralleled with additional user-defined context.
 
-For a worked example of hand-authored **`uns`** policies (ISA-95 metadata, **`blockchain insert`**, **`blockchain get uns`**), see [Custom UNS (data stream, ISA-95)](UNS_custom.md).
+For a working example of hand-authored UNS policies (ex. ISA-95 metadata) see  , see [Custom UNS (data stream, ISA-95)](UNS_custom.md).
 
 ---
 
@@ -61,15 +61,20 @@ automatically generates a UNS hierarchy from it.
     user = anyloguser and password = mqtt4AnyLog! and
     master_node = !ledger_conn and log = false and
     topic = (
-        name = "vessel-data/DLT/#" and
+        name = "Enterprise C/tff/PCV7X/#" and
         dbms = !default_dbms and
         dynamic = true
     )>
 ```
 
-In the example above, the `#` wildcard subscribes to all topics under `vessel-data/DLT/`. Each arriving 
-message — for example `vessel-data/DLT/PCV7X/percent` with value `100` — is stored directly using the topic 
-path as the namespace address, with no mapping policy required.
+In the example above, the `#` wildcard subscribes to all topics under `Enterprise C/tff/PCV7X`. 
+
+Each arriving message — for example `Enterprise C/tff/PCV7X/percent` with value `50` — is stored directly using the 
+topic path as the namespace address, with no mapping policy required. 
+
+`dynamic=true` topic configuration tells the message client to not only store the data, but also automatically crate
+a UNS structure for it as part of the the blockchain's metadata. 
+
 
 ### Example: ProveIt virtual factory (authenticated MQTT)
 
@@ -202,7 +207,6 @@ The following shows the UNS policies generated for `Enterprise C / tff / PCV7X /
     "uns": {
         "name": "Enterprise_C",
         "namespace": "Enterprise_C",
-        "uns_level": "enterprise",
         "id": "b992dcf093661dc3dc966c6a420ac816",
         "date": "2026-02-16T19:13:14.831323Z",
         "ledger": "global"
@@ -216,7 +220,6 @@ The following shows the UNS policies generated for `Enterprise C / tff / PCV7X /
     "uns": {
         "name": "tff",
         "namespace": "Enterprise_C/tff",
-        "uns_level": "namespace",
         "parent": "b992dcf093661dc3dc966c6a420ac816",
         "dbms": "manufacturing_historian",
         "table": "tff",
@@ -233,7 +236,6 @@ The following shows the UNS policies generated for `Enterprise C / tff / PCV7X /
     "uns": {
         "name": "PCV7X",
         "namespace": "Enterprise_C/tff/PCV7X",
-        "uns_level": "device",
         "parent": "2d8e35eaf0df9bfbdec0d112a410f24e",
         "dbms": "manufacturing_historian",
         "table": "tff_pcv7x",
@@ -250,7 +252,6 @@ The following shows the UNS policies generated for `Enterprise C / tff / PCV7X /
     "uns": {
         "name": "percent",
         "namespace": "Enterprise_C/tff/PCV7X/percent",
-        "uns_level": "sensor",
         "parent": "9a08e1c52440638803215c0c61b9d27d",
         "dbms": "manufacturing_historian",
         "table": "tff_pcv7x_percent",
@@ -278,7 +279,7 @@ AnyLog addresses this in two ways:
 
 All data retrieval from nodes happens through SQL queries against the network. The interface is always the same 
 regardless of what's underneath — whether blob data stored in S3-compatible buckets or time-series data in 
-SQLite or PostgreSQL.
+SQLite or PostgresSQL.
 
 The UNS lives in the metadata layer on the blockchain, which means it is guaranteed to be present and 
 consistent for anyone querying the system. This allows both users and AI agents to reliably drill down to 
