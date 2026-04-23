@@ -253,7 +253,8 @@ policy_id = opcua-combined
         },
         "metadata": {
             "type": "varchar",
-            "bring": "[metadata]"
+            "bring": "[metadata]",
+            "default": "{}"
         }
     }
 }}>
