@@ -62,6 +62,9 @@ nav:
   - slug: network-configurations
     title: Network Configuration
     file: Network & Services/network-configurations.md
+  - slug: using-rest
+    title: Using REST
+    file: Network & Services/using-rest.md
   - slug: messaging-services
     title: Messaging Service
     file: Network & Services/messaging-services.md
@@ -132,9 +135,6 @@ nav:
   - slug: sql-setup
     title: SQL & Database Setup
     file: Querying Data (Northbound)/sql-setup.md
-  - slug: using-rest
-    title: Using REST
-    file: Querying Data (Northbound)/using-rest.md
   - slug: grafana
     title: Grafana
     file: Querying Data (Northbound)/grafana.md
@@ -177,12 +177,15 @@ nav:
     file: Tools & UI/remote-gui.md
 - title: Version Control
   items:
+  - slug: DEPLOYMENT_SCRIPTS-CHANGELOGS
+    title: Deployment Scripts (Changelog)
+    file: Version Control/DEPLOYMENT_SCRIPTS-CHANGELOGS.md
+  - slug: DOCKER_COMPOSE-CHANGELOG
+    title: Changelog
+    file: Version Control/DOCKER_COMPOSE-CHANGELOG.md
   - slug: SOURCE-CHANGELOGS
     title: AnyLog's Source Code (Changelog)
     file: Version Control/SOURCE-CHANGELOGS.md
-  - slug: SCRIPTS-CHANGELOGS
-    title: Deployment Scripts (Changelog)
-    file: Version Control/SCRIPTS-CHANGELOGS.md
 - title: Reference
   items:
   - slug: FAQ
