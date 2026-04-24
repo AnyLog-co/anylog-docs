@@ -10,6 +10,31 @@ Build a proper documentation website at **https://anylog.network/docs** using Je
 raw GitHub repo access with a structured, navigable site comparable to EdgeX or ReadTheDocs.
  
 ---
+
+## Contributing
+
+This documentation is implementing a change control process. Therefore the repository follows a **PR-based workflow** 
+There are 2 branches : 
+- ***'main'*** is the current client version (it contains a version file as the source code)
+- ***'pre-develop'*** is the next version being worked on
+- Once a month , when a new code version is prepared, the documentation files follow the same process with a ***review of pending PRs pull requests*** before the pre-develop is merged on main
+
+**Required actions :** 
+- Find the file you want to update and fork it from 'pre-develop' (or create a new file)
+- IF you work locally
+  1. Make sure your local copy is in sync with `pre-develop`:
+   ```bash
+   git fetch origin
+   git rebase origin/pre-develop
+   ```
+  2. Create a feature branch or fork the file, make your changes, then open a pull request **against `pre-develop`**
+
+- once edited, create a **pull request** for review and inclusion at the next update cycle
+
+*note:* direct pushes to `main` or 'pre-develop' are blocked
+*note2:* GitHub Pages builds and publishes automatically once the PR is merged
+
+---
  
 ## Source repositories
  
@@ -17,7 +42,7 @@ raw GitHub repo access with a structured, navigable site comparable to EdgeX or 
 |---|---|---|
 | **https://github.com/AnyLog-co/documentation** | Old docs — ~279 files, comprehensive but unorganised, not a website | Source of truth for migration |
 | **EdgeLake documentation site** | Ori's first Jekyll attempt — limited, semi-organised | To be deprecated |
-| **https://github.com/AnyLog-co/anylog-docs.github.io** (branch: `os-dev`) | New Jekyll site — active development | Work in progress |
+| **https://github.com/AnyLog-co/anylog-docs.github.io** (branch: `main`) | New Jekyll site — active development | Work in progress |
 
 ---
 
@@ -45,6 +70,12 @@ layout: page
 - 2026-05-12 | updated x, y, z
 --> 
 ```
+Evey file **must** contain a header change log so when reading it one knows when changed / who did it / what date and Anylog version,  use this table format
+| Date of change | Relevant Anylog code version | Author | Description |
+|---|---|---|---|
+| - | - | - | Documentation Copyright Anylog.co 2026 |
+| 2026-04-19 | All | Eric Aquaronne | update readme for Anylog |
+
 
 ### 2. Register it in the navigation
 
@@ -67,7 +98,7 @@ The slug is the filename without the `.md` extension. The order of slugs within 
 
 ---
 
-## Writing Guidelines
+## Editing/Writing Guidelines
 
 - **Use relative paths** for links between doc pages (e.g. `[Install](installing-anylog.md)`)
 - **External links** must open in a new tab:
@@ -75,6 +106,10 @@ The slug is the filename without the `.md` extension. The order of slugs within 
   <a href="https://example.com" target="_blank">Link text</a>
   ```
 - Keep front matter `description` to a single sentence — it appears as the subtitle under the page title
+- Keep to short sentences, add drawings/pics (PNG files) to make it easy to understand for readers that probably will be more OT than IT skills base
+
+---
+
 - The title at the top is also used as the page title, there's no need for double title 
 **Example**: How not to define the Makefile  
 ```markdown
@@ -119,7 +154,7 @@ This repo follows a **PR-based workflow** — do not push directly to `pre-devel
 
 ---
 
-## Prompting Claude to Update a Doc Page
+## Leveraging Claude LLM to Update a Doc Page
 
 A reliable pattern for getting Claude to rewrite or update a page while keeping it consistent with the rest of the docs:
 
