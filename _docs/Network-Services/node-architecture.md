@@ -24,7 +24,7 @@ The orchestration column on the left runs continuously in the background, keepin
 network.
 
 <div class="home-diagram" align="center">
-    <img src="{{ '/assets/img/anylog_block_architecture.svg' | relative_url }}" alt="AnyLog node architecture diagram" height="30%" width="30%">
+    <img src="{{ '/assets/img/anylog_block_architecture.svg' | relative_url }}" alt="AnyLog node architecture diagram" height="60%" width="60%">
 </div>
 
 
