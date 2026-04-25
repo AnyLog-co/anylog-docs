@@ -7,6 +7,7 @@ layout: page
 ## Changelog
 - 2026-04-17 | Created document
 - 2026-04-23 | Moved to Network and Services; added POST as GET alternative, AnyLog-Agent header, blockchain insert command, Python examples
+- 2026-04-24 | there was an issue with the REST POST of commands example 
 -->
 
 Any AnyLog node with the REST service enabled, can receive commands and data over HTTP. This lets external applications, dashboards, and scripts interact with the network without running AnyLog themselves.
