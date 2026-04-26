@@ -19,6 +19,7 @@ Any AnyLog node with the REST service enabled, can receive commands and data ove
 | Method | Used for |
 |---|---|
 | `GET` | Retrieve information — `sql`, `get`, `blockchain get`, `help` |
+| `GET` (query string) | Browser-native GET — command and options passed as `?key=value?key=value` parameters |
 | `POST` | All commands (alternative to GET) and data publishing via topic mapping |
 | `PUT` | Publish time-series data directly to a node |
 
@@ -98,6 +99,31 @@ curl -X GET 'http://10.0.0.78:32349' \
   -H 'command: help blockchain get' \
   -H 'User-Agent: AnyLog/1.23'
 ```
+
+### Browser GET (query string)
+
+When calling from a browser directly — where custom headers cannot be set — pass the command and options as query 
+string parameters instead. Each parameter is separated by `?` rather than `&`:
+
+```
+http://10.0.0.78:7849/?command=get status where format=json?AnyLog-Agent=AnyLog/1.23
+
+http://10.0.0.78:7849/?command=sql anotherpeak select * from battery_pack_logs where period(minute, 5, now(), timestamp) limit 10?AnyLog-Agent=AnyLog/1.23?destination=network
+```
+
+| Parameter | Description |
+|---|---|
+| `command` | The AnyLog command to execute |
+| `AnyLog-Agent` | Identity header — use `AnyLog/1.23` |
+| `destination` | Optional — `network` to broadcast, or `IP:Port` for a specific node |
+
+> Note the separator between parameters is `?` not `&` — this is specific to AnyLog's query string parsing and differs 
+> from standard URL convention.
+
+This is the browser equivalent of the curl GET style. For browser-based applications making programmatic calls, prefer 
+[POST with `AnyLog-Agent` in the body](#post-as-an-alternative-to-get) — it gives more control and avoids query string 
+length limits.
+
 
 ---
 
