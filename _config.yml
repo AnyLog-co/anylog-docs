@@ -26,6 +26,8 @@ exclude:
 - Gemfile.lock
 - README.md
 - vendor
+include:
+- assets/img/node_configs.env
 nav:
 - title: Getting Started
   items:

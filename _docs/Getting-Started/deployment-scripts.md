@@ -6,9 +6,12 @@ layout: page
 <!--
 ## Changelog
 - 2026-04-17 | Created document
+- 2026-04-25 | updated hyperlinks
+- 2026-04-25 | updated [page.html](../../_layouts/page.html) to support pop-up for env configs 
 --> 
 
-> This page picks up where [Installing & Deploying](/docs/installing-anylog/) leaves off. It explains what happens *inside* the container after `make up` — how configuration flows from your `.env` file into a running, networked AnyLog node.
+> This page extends the different installation processes by explaining what happens *inside* the container after 
+> `make up` — how configuration flows from your `.env` file into a running, networked AnyLog node.
 
 ---
 
@@ -27,16 +30,21 @@ An AnyLog Docker container is made of two independent pieces:
 The **binary** is the compiled AnyLog runtime. It knows how to execute `.al` scripts but does nothing on its own.
 
 The <a href="https://github.com/AnyLog-co/deployment-scripts/" target="_blank">**deployment-scripts**</a> repo tells the 
-binary what to do: which services to start, which databases to connect, which policies to publish. It's designed to be forked — you own the logic.
+binary what to do: which services to start, which databases to connect, which policies to publish. It's designed to be 
+forked — you own the logic.
 
 ```ini
 DEPLOYMENTS_REPO="https://github.com/AnyLog-co/deployment-scripts"
 DEPLOYMENTS_BRANCH="pre-develop"
 ```
 
-**Option 1 — Git clone (default):** Docker pulls the repo at container start. Change `DEPLOYMENTS_REPO` and `DEPLOYMENTS_BRANCH` to point to your own fork.
+**Option 1 — Git clone (default):** Docker pulls the repo at container start. Change `DEPLOYMENTS_REPO` and 
+`DEPLOYMENTS_BRANCH` to point to your own fork.
 
-**Option 2 — Local path (recommended for development):** If `DEPLOYMENTS_REPO` is set to an absolute path on your machine (e.g. `/home/user/deployment-scripts`), the docker-compose logic detects that it's a local directory and mounts it as a volume instead of cloning. Changes you make on your host are reflected inside the container immediately — no rebuild or re-pull needed.
+**Option 2 — Local path (recommended for development):** If `DEPLOYMENTS_REPO` is set to an absolute path on your 
+machine (e.g. `/home/user/deployment-scripts`), the docker-compose logic detects that it's a local directory and 
+mounts it as a volume instead of cloning. Changes you make on your host are reflected inside the container immediately 
+— no rebuild or re-pull needed.
 
 ```ini
 # Use a local checkout instead of cloning from GitHub
@@ -44,7 +52,8 @@ DEPLOYMENTS_REPO="/home/user/my-deployment-scripts"
 DEPLOYMENTS_BRANCH=""            # not used for local paths
 ```
 
-This is the recommended workflow when you're actively editing scripts — edit on your host, restart the container (`make down && make up`), changes are live.
+This is the recommended workflow when you're actively editing scripts — edit on your host, restart the container 
+(`make down && make up`), changes are live.
 
 ---
 
@@ -84,7 +93,8 @@ When you run `make up ANYLOG_TYPE=anylog-operator`, Docker starts the container 
 process /app/deployment-scripts/node-deployment/main.al
 ```
 
-<a href="https://github.com/AnyLog-co/deployment-scripts/blob/main/node-deployment/main.al" target="_blank">`main.al`</a> orchestrates the entire startup in fixed stages:
+<a href="https://github.com/AnyLog-co/deployment-scripts/blob/main/node-deployment/main.al" target="_blank">`main.al`</a> 
+orchestrates the entire startup in fixed stages:
 
 ```
 docker run
@@ -116,9 +126,9 @@ After startup, `main.al` runs `get processes` and (if MQTT is on) `get msg clien
 ---
 
 ## node_configs.env — section by section
+All node configuration lives in a single [`node_configs.env`](#){: onclick="openEnvModal(); return false;"} file. New users only 
+need to edit **basic** and **secrets**. Every other section is optional and safe to leave at its defaults.
 
-All node configuration lives in a single `node_configs.env` file. New users only need to edit **basic** and **secrets**. 
-Every other section is optional and safe to leave at its defaults.
 
 ### `.env` — Docker deployment settings
 
