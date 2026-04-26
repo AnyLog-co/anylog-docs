@@ -268,6 +268,6 @@ curl -X GET 127.0.0.1:32549 \
   -H "User-Agent: AnyLog/1.23"
 ```
 
-See <a href="{{ '/docs/Network-Services/using-rest/ | relative_url }}">Using REST</a> and
+See <a href="{{ '/docs/Network-Services/using-rest/' | relative_url }}">Using REST</a> and
 <a href="{{ '/docs/Network-Services/background-services/' | relative_url }}">Background Services</a> for full 
 configuration reference.
