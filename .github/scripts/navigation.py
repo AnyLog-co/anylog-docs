@@ -66,5 +66,6 @@ ITEM_ORDER = {
     ],
     "Reference": [
         "FAQ",
+        "troubleshooting"
     ],
 }

@@ -8,7 +8,8 @@ layout: page
 - 2026-04-17 | Created document
 --> 
 
-Background services are optional processes that, when activated, run on dedicated threads according to the node's configuration. Services can be enabled in any of the following ways:
+Background services are optional processes that, when activated, run on dedicated threads according to the 
+node's configuration. Services can be enabled in any of the following ways:
 
 - Command line arguments when starting AnyLog
 - Directly on the AnyLog CLI
@@ -98,13 +99,15 @@ exit SMTP
 
 ### TCP service
 
-Enables AnyLog's peer-to-peer protocol for sending and receiving messages between nodes. The IP and ports used by this process are published to the blockchain, making the node recognizable and accessible to network peers.
+Enables AnyLog's peer-to-peer protocol for sending and receiving messages between nodes. The IP and ports used by 
+this process are published to the blockchain, making the node recognizable and accessible to network peers.
 
 Each node can be identified by up to two IP addresses:
 - **External IP** — accessible from the Internet
 - **Internal IP** — accessible from a private/local network
 
-If both are provided, the node listens on the internal IP. If only one is provided, the node listens on that IP. Setting `bind = false` causes the node to listen on all reachable IPs on the specified port.
+If both are provided, the node listens on the internal IP. If only one is provided, the node listens on that IP. 
+Setting `bind = false` causes the node to listen on all reachable IPs on the specified port.
 
 ```anylog
 <run tcp server where
@@ -186,7 +189,9 @@ trace level = 2 run rest server    # show REST commands with headers and body
 
 ### MCP service
 
-Exposes the node as a [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server, enabling AI assistants and LLM-based tools to query and interact with the AnyLog network.
+
+Exposes the node as <a href="https://modelcontextprotocol.io" target="_blank">Model Context Protocol (MCP)</a> server, 
+enabling AI assistants and LLM-based tools to query and interact with the AnyLog network.
 
 ```anylog
 run mcp server
@@ -197,7 +202,8 @@ set mcp client config where external_ip = [ip] and external_port = [port] and in
 
 ### Message broker service (local)
 
-Configures the AnyLog node itself as an MQTT broker, allowing third-party clients and devices to publish data directly to it. See <a href="{{ '/docs/Network-Services/Managing%20Data%20(Southbound/' | relative_url }}">Using EdgeX</a>/edgex.md) for an example integration.
+Configures the AnyLog node itself as an MQTT broker, allowing third-party clients and devices to publish data directly 
+to it. See <a href="{{ '/docs/Managing-Data-Southbound/node-red/' | relative_url }}">node-RED</a> for an example integration.
 
 ```anylog
 <run message broker where
@@ -233,7 +239,10 @@ get local broker
 
 ### Operator service
 
-The Operator monitors the watch directory, identifies or creates schemas, and ingests data into local databases. An Operator must be associated with an <a href="{{ '/docs/Metadata/policies/#operator-policy' | relative_url }}">Operator policy</a> and a <a href="{{ '/docs/Metadata/policies/#cluster-policy' | relative_url }}">Cluster policy</a> published to the metadata layer.
+The Operator monitors the watch directory, identifies or creates schemas, and ingests data into local databases. 
+An Operator must be associated with an <a href="{{ '/docs/Network-Services/policies-metadata/#operator-policy' | relative_url }}">Operator policy</a> 
+and a <a href="{{ '/docs/Network-Services/policies-metadata/#cluster-policy' | relative_url }}">Cluster policy</a> 
+published to the metadata layer.
 
 > **Note:** The Operator and Publisher services cannot run on the same node. A node acts as either an Operator (stores data) or a Publisher (routes data to Operators), not both.
 
@@ -275,7 +284,8 @@ get operator summary where format = json
 
 ### Publisher service
 
-The Publisher monitors the watch directory and distributes data files to the appropriate Operator nodes based on metadata policies. It does not store data locally.
+The Publisher monitors the watch directory and distributes data files to the appropriate Operator nodes based on 
+metadata policies. It does not store data locally.
 
 > **Note:** The Publisher and Operator services cannot run on the same node. A node acts as either a Publisher (routes data) or an Operator (stores data), not both.
 
@@ -311,7 +321,8 @@ get publisher
 
 ### HA: Data distributor and data consumer
 
-These two services work together to provide High Availability (HA) by keeping data consistent across all Operators in the same cluster.
+These two services work together to provide High Availability (HA) by keeping data consistent across all Operators in 
+the same cluster.
 
 - **Data distributor** — copies new data files from the local node to all peer Operators in the cluster.
 - **Data consumer** — periodically validates the completeness of the local data set and retrieves any missing data from cluster peers.
@@ -361,7 +372,8 @@ get consumer
 
 ## Blockchain sync service
 
-Periodically connects to the blockchain platform or a master node to update the local copy of metadata. This ensures the node can satisfy metadata queries locally, even if the upstream source is temporarily unreachable.
+Periodically connects to the blockchain platform or a master node to update the local copy of metadata. This ensures 
+the node can satisfy metadata queries locally, even if the upstream source is temporarily unreachable.
 
 ```anylog
 run blockchain sync where source = [master|blockchain] and time = [interval] and dest = [file|dbms] and connection = [ip:port]
@@ -422,7 +434,8 @@ test node
 
 ### test node and test network
 
-Validates connectivity to every node published on the metadata layer. For each node, AnyLog sends a test message and reports the response:
+Validates connectivity to every node published on the metadata layer. For each node, AnyLog sends a test message and 
+reports the response:
 
 ```anylog
 test network
@@ -436,7 +449,9 @@ test network
 
 ### Message client (subscribe to external broker)
 
-Subscribes to a third-party MQTT or REST broker and maps incoming messages to database tables. See <a href="{{ '/docs/Network-Services/Managing%20Data%20(Southbound/' | relative_url }}">Data Ingestion</a>/data-ingestion.md) for full parameter reference and mapping examples.
+Subscribes to a third-party MQTT or REST broker and maps incoming messages to database tables. 
+See <a href="{{ '/docs/Managinin-Data-Southbound/data-ingestion/' | relative_url }}">Data Ingestion</a>
+for full parameter reference and mapping examples.
 
 ```anylog
 <run msg client where
@@ -461,12 +476,14 @@ get msg client where broker = driver.cloudmqtt.com:18785 and topic = mydata
 
 ### UNS Streamer
 
-The UNS (Unified Namespace) Streamer is automatically activated — no explicit `run` command is required — when data arrives through a dynamic southbound connector:
+The UNS (Unified Namespace) Streamer is automatically activated — no explicit `run` command is required — when data 
+arrives through a dynamic southbound connector:
 
 - **MQTT msg client** configured in dynamic mode (topic and schema determined at runtime)
-- **PLC client** receiving data via <a href="{{ '/docs/Network-Services/Managing%20Data%20(Southbound/' | relative_url }}">OPC-UA or EtherNet/IP</a>/opcua.md)
+- **PLC client** receiving data via <a href="{{ '/docs/Managing-Data-southbound/opcua/' | relative_url }}">OPC-UA</a> or <a href="{{ '/docs/Managing-Data-southbound/etherip/' | relative_url }}">EtherNet/IP</a>
 
-When active, the UNS Streamer normalises incoming data into a unified namespace structure before routing it to the appropriate database table.
+When active, the UNS Streamer normalises incoming data into a unified namespace structure before routing it to the 
+appropriate database table.
 
 Monitor:
 ```anylog
@@ -536,25 +553,31 @@ get grpc client
 
 ### PLC client
 
-Connects to industrial PLCs and controllers via OPC-UA or EtherNet/IP and streams data into the AnyLog network. See <a href="{{ '/docs/Network-Services/Managing%20Data%20(Southbound/' | relative_url }}">OPC-UA & PLC Integration</a>/opcua.md) for full configuration and examples.
+Connects to industrial PLCs and controllers via OPC-UA or EtherNet/IP and streams data into the AnyLog network.
+See <a href="{{ '/docs/Managing-Data-Southbound/opcua/' | relative_url }}">OPC-UA</a> PLC Integration
+for full configuration and examples.
 
 ---
 
 ### Video processes
 
-Manages ingestion and archival of video streams and image data. See <a href="{{ '/docs/Network-Services/Managing%20Data%20(Southbound/' | relative_url }}">Video Streaming</a>/video-streaming.md) for full configuration and examples.
+Manages ingestion and archival of video streams and image data. 
+See <a href="{{ '/docs/Managing-Data-Southbound/video_streaming/' | relative_url }}">Video Streaming</a> for full 
+configuration and examples.
 
 ---
 
 ## Scheduler
 
-Users can define one or more schedulers, each running a set of tasks at a configured interval. Scheduler `0` is the system scheduler; scheduler `1` (and above) are user-defined.
+Users can define one or more schedulers, each running a set of tasks at a configured interval. Scheduler `0` is the 
+system scheduler; scheduler `1` (and above) are user-defined.
 
 ```anylog
 run scheduler [id]
 ```
 
-Tasks can include AnyLog queries, script files, monitoring checks, or <a href="{{ '/docs/Monitoring/alerts-and-monitoring/' | relative_url }}">alerts and monitoring</a> rules.
+Tasks can include AnyLog queries, script files, monitoring checks, or
+<a href="{{ '/docs/Monitoring/alerts-and-monitoring/' | relative_url }}">alerts and monitoring</a> rules.
 
 Monitor:
 ```anylog
@@ -566,7 +589,9 @@ get scheduler 1
 
 ## SMTP client
 
-Enables email and SMS notifications triggered by the scheduler or rule engine. See <a href="{{ '/docs/Monitoring/alerts-and-monitoring/' | relative_url }}">Alerts and Monitoring</a> for how to configure notification rules.
+Enables email and SMS notifications triggered by the scheduler or rule engine. 
+See <a href="{{ '/docs/Monitoring/alerts-and-monitoring/' | relative_url }}">Alerts and Monitoring</a> for how to 
+configure notification rules.
 
 ```anylog
 <run smtp client where
@@ -588,13 +613,16 @@ Example:
 run smtp client where email = anylog.iot@gmail.com and password = mypassword
 ```
 
-> To use a Gmail account as sender: [create a Google account](https://accounts.google.com/signup) and enable [Allow less secure apps](https://myaccount.google.com/lesssecureapps).
+
+> To use a Gmail account as sender: <a href="https://accounts.google.com/signup" target="_blank">create a Google account</a> 
+> and enable <a href="https://myaccount.google.com/lesssecureapps" target="_blank">Allow less secure apps</a>.
 
 ---
 
 ## Streamer
 
-Required when using streaming mode for data ingestion. The Streamer enforces time-based and volume-based buffer flush thresholds, writing buffered data to files for the Operator to process.
+Required when using streaming mode for data ingestion. The Streamer enforces time-based and volume-based buffer flush 
+thresholds, writing buffered data to files for the Operator to process.
 
 ```anylog
 run streamer where prep_dir = [path] and watch_dir = [path] and err_dir = [path]
@@ -613,7 +641,8 @@ get streaming
 
 ## Blobs archiver
 
-Manages storage of large binary objects (images, video, audio) by routing them to a dedicated blobs database, a folder, or both.
+Manages storage of large binary objects (images, video, audio) by routing them to a dedicated blobs database, a folder, 
+or both.
 
 ```anylog
 <run blobs archiver where

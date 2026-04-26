@@ -69,7 +69,10 @@ Use `bind = false` when you want the node to accept connections from both local 
 
 ## Port forwarding (NAT traversal)
 
-If your node is behind a home router or corporate firewall, configure [port forwarding](https://en.wikipedia.org/wiki/Port_forwarding) on the router to redirect incoming traffic:
+
+If your node is behind a home router or corporate firewall, configure 
+<a href="https://en.wikipedia.org/wiki/Port_forwarding" target="_blank">port forwarding</a> on the router to redirect 
+incoming traffic:
 
 ```
 External IP:Port  →  Internal IP:Port
@@ -129,7 +132,7 @@ test node 10.0.0.78:32048
 run client 10.0.0.78:32048 get status
 ```
 
-See <a href="{{ '/docs/Getting-Started/AnyLog-CLI/#test-node-and-test-network' | relative_url }}">CLI — test node and test network</a> for full details.
+See <a href="{{ '/docs/Reference/troubleshooting' | relative_url }}">CLI — test node and test network</a> for full details.
 
 ---
 

@@ -6,6 +6,7 @@ layout: page
 <!--
 ## Changelog
 - 2026-04-17 | Created document
+- 2026-04-25 | file path to use `_` rather than `-`
 --> 
 
 AnyLog can connect to video streams, record segmented clips to a blob database, and optionally run AI inference (e.g. YOLOv5 object detection) via a gRPC server.
