@@ -6,6 +6,7 @@ layout: page
 <!--
 ## Changelog
 - 2026-04-17 | Created document
+- 2026-04-25 | hyperlink fix
 --> 
 
 ## What is AnyLog?
@@ -192,7 +193,7 @@ Data travels from sensors → edge hardware → cloud before it is accessible to
 **With AnyLog / EdgeLake:**
 Each edge data server becomes an operator node, directly part of the queryable network. Multiple operator nodes together form a virtual data lake. Applications connect to a single query node — not to each data source individually — and AnyLog handles locating and retrieving the data using blockchain metadata. This removes the complexity of managing multiple connections, eliminates the need to know where data physically resides, and dramatically reduces latency.
 
-<img src="../../assets/img/traditional_vs_anylog_architecture.svg" style="height=50%;width=50%;">
+<img src="{{ '/assets/img/traditional_vs_anylog_architecture.svg' | relative_url }}" style="height:50%;width:50%;" />
 
 ### Application-Facing Architecture
 

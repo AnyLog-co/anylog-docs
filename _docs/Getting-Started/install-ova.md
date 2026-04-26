@@ -29,7 +29,7 @@ All components start automatically when the VM boots.
 
 - Hypervisor: VMware Workstation, VMware ESXi, or VirtualBox
 - Minimum 4 GB RAM, 2 vCPUs, 20 GB disk recommended
-- AnyLog license key — get one at [https://www.anylog.network/download](https://www.anylog.network/download)
+- AnyLog license key — get one at <a href="https://www.anylog.network/download" target="_blank">https://www.anylog.network/download</a>
 
 ---
 

@@ -6,14 +6,16 @@ layout: page
 <!--
 ## Changelog
 - 2026-04-17 | Created document
-- 2026-04-25 | updated hyperlinks
+- 2026-04-25 | updated hyperlinks - need to update directions (once working)
 --> 
 
-By default AnyLog is deployed as a Docker container or via Kubernetes. In some environments — limited disk space, regulatory requirements, network constraints, or hardware without container support — it makes more sense to install AnyLog directly on the host as a systemd service.
+By default AnyLog is deployed as a Docker container or via Kubernetes. In some environments — limited disk space, 
+regulatory requirements, network constraints, or hardware without container support — it makes more sense to install 
+AnyLog directly on the host as a systemd service.
 
 > When running as a service the local CLI is disabled. All interaction with the node after startup is done via REST. 
 > See <a href="{{ '/docs/CLI/AnyLog-CLI/' | relative_url }}">AnyLog CLI</a> and
-> <a href="{{ '/docs/Network-Services/using-rest/ | relative_url }}">Using REST</a> for reference.
+> <a href="{{ '/docs/Network-Services/using-rest/' | relative_url }}">Using REST</a> for reference.
 
 ---
 
@@ -28,7 +30,7 @@ By default AnyLog is deployed as a Docker container or via Kubernetes. In some e
 
 ## Step 1 — Download the AnyLog binary
 
-A full list of available builds is at [http://45.33.11.32/](http://45.33.11.32/).
+A full list of available builds is at <a href="https://downloads.anylog.network/images+vms/" target="_blank">downloads.anylog.network</a>
 
 ```shell
 mkdir -p $HOME/anylog

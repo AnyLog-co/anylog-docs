@@ -6,9 +6,11 @@ layout: page
 <!--
 ## Changelog
 - 2026-04-17 | Created document
+- 2026-04-26 | hyperlink fix
 --> 
 
-> This guide covers a standard 3-node deployment (master, operator, query) on a single machine. For a conceptual overview of node types, see <a href="{{ '/docs/./getting-started/' | relative_url }}">Introduction to AnyLog</a>.
+> This guide covers a standard 3-node deployment (master, operator, query) on a single machine. For a conceptual 
+> overview of node types, see <a href="{{ '/docs/Getting-Started/getting-started/' | relative_url }}">Introduction to AnyLog</a>.
 
 ## Prerequisites
 
@@ -37,9 +39,11 @@ If nodes are on separate machines, confirm these ports are accessible between th
 
 ### AnyLog Docker access key
 
-[Request a license and Docker access key](https://anylog.network/download). You'll need this to pull the AnyLog image. Keep the key handy — one wrong character will cause login to fail.
+<a href="https://anylog.network/download" target="_blank">Request a license and Docker access key</a>. 
+You'll need this to pull the AnyLog image. Keep the key handy — one wrong character will cause login to fail.
 
-> **Watch out for `l` vs `1`:** Characters in the key that look like the number `1` may actually be lowercase `l` — and vice versa. If Docker login fails, check every character carefully.
+> **Watch out for `l` vs `1`:** Characters in the key that look like the number `1` may actually be lowercase `l` — 
+> and vice versa. If Docker login fails, check every character carefully.
 
 ---
 
@@ -99,7 +103,8 @@ docker-compose/
         └── node_configs.env
 ```
 
-Each node type has its own `node_configs.env`. You can duplicate any of these directories to maintain multiple configuration sets for the same node type.
+Each node type has its own [`node_configs.env`](#){: onclick="openEnvModal(); return false;"}. You can duplicate any 
+of these directories to maintain multiple configuration sets for the same node type.
 
 ---
 
@@ -113,7 +118,7 @@ docker logout
 docker login docker.io -u anyloguser -p [YOUR-KEY]
 ```
 
-Expected output on success:
+**Expected output on success**:
 ```
 WARNING! Your credentials are stored unencrypted in '/root/.docker/config.json'
 Login Succeeded
@@ -163,8 +168,6 @@ LEDGER_CONN=127.0.0.1:32048  # Master node IP:port — set this on ALL nodes
 - **Operator node:** `DEFAULT_DBMS` (logical database name) and `DB_TYPE` (physical database type) are set. If using PostgreSQL, also validate `DB_USER`, `DB_PASSWD`, and the DB host/port
 - **Operator node (optional):** If receiving data via MQTT, enable the MQTT service and confirm `MSG_DBMS` matches `DEFAULT_DBMS`
 
-Full configuration reference: [docker-compose/configs.md](https://github.com/AnyLog-co/docker-compose/blob/os-dev/configs.md)
-
 ---
 
 ## Step 5 — Deploy the nodes
@@ -182,7 +185,8 @@ make up ANYLOG_TYPE=anylog-operator
 make up ANYLOG_TYPE=anylog-query
 ```
 
-Docker pulls the AnyLog image on first run — this takes about 30 seconds. On a single machine, a short delay between nodes is built into the configuration to let each one initialize before the next starts.
+Docker pulls the AnyLog image on first run — this takes about 30 seconds. On a single machine, a short delay between 
+nodes is built into the configuration to let each one initialize before the next starts.
 
 ---
 
@@ -207,7 +211,7 @@ AL > test network
 AL > get processes
 ```
 
-Press `Ctrl+D` to detach from the CLI without stopping the node.
+Press `ctrl+d` to detach from the CLI without stopping the node.
 
 ---
 
@@ -249,7 +253,12 @@ curl -X [GET|PUT|POST] [REST_IP]:[REST_PORT] \
   [-H "destination: [remote node TCP IP:port]"]
 ```
 
-To target a specific remote node, use `-H "destination: [IP:port]"`. To route a query across the entire network (letting AnyLog locate the data via metadata), use `-H "destination: network"`.
+To target a specific remote node, use `-H "destination: [IP:port]"`. To route a query across the entire network 
+(letting AnyLog locate the data via metadata), use `-H "destination: network"`.
+
+
+Visit [using REST documentation](/docs/Network-Services/using-rest.md) for farther details on communicating with the nodes
+(and network) via REST.
 
 ---
 
@@ -264,8 +273,6 @@ To target a specific remote node, use `-H "destination: [IP:port]"`. To route a 
 | `get databases` | Databases connected on this node |
 | `test node` | Validates network connectivity for this node |
 | `test network` | Validates communication with other nodes |
-
-Full reference: [AnyLog commands documentation](https://github.com/AnyLog-co/documentation/blob/master/anylog%20commands.md)
 
 ---
 
@@ -311,7 +318,8 @@ blockchain get table where dbms=mydb bring [*][name] separator=\n
 run client (destination) [command]
 ```
 
-`destination` can be a direct `IP:port`, or empty `()` to let the network route the request via metadata. For REST calls, use the `-H "destination: XXX"` header; use `destination: network` to let AnyLog route automatically.
+`destination` can be a direct `IP:port`, or empty `()` to let the network route the request via metadata. For REST 
+calls, use the `-H "destination: XXX"` header; use `destination: network` to let AnyLog route automatically.
 
 ### Distributed SQL queries
 
@@ -319,7 +327,8 @@ run client (destination) [command]
 run client () sql [db name] "SELECT ..."
 ```
 
-The query node uses blockchain metadata to identify which operator nodes hold the data, distributes the query, collects partial results (operators compute `sum`/`count` for aggregates), and assembles the final result.
+The query node uses blockchain metadata to identify which operator nodes hold the data, distributes the query, 
+collects partial results (operators compute `sum`/`count` for aggregates), and assembles the final result.
 
 ```bash
 # REST equivalent — query across the network
@@ -331,8 +340,6 @@ curl -X GET 127.0.0.1:32349 \
 ```
 
 > **SQL tip:** When using time comparisons, always use `>=`. For example: `WHERE insert_timestamp >= NOW() - 10 minutes`. Omitting `>=` will cause a parse error.
-
-More detail: [SQL query documentation](https://github.com/AnyLog-co/documentation/blob/master/queries.md#query-nodes-in-the-network)
 
 ---
 
@@ -472,7 +479,8 @@ reset query log
 
 ### Node communication failures
 
-The most common failure is nodes unable to reach each other — surfaced as a specific error in `get error log` and in CLI responses.
+The most common failure is nodes unable to reach each other — surfaced as a specific error in `get error log` and in 
+CLI responses.
 
 To diagnose:
 1. Run `test network` to see which nodes are not responding
@@ -481,7 +489,8 @@ To diagnose:
 
 To resolve:
 - **Same DNS network:** Bind node IPs to the shared local IP rather than the external/router-assigned IP
-- **Different DNS networks:** Validate that AnyLog's ports are open and accessible externally — check both the machine-level firewall and any router/modem port-forwarding configuration
+- **Different DNS networks:** Validate that AnyLog's ports are open and accessible externally — check both the 
+- machine-level firewall and any router/modem port-forwarding configuration
 
 Reset the error log once resolved: `reset error log`
 
