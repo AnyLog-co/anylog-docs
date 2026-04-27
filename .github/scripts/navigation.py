@@ -14,6 +14,7 @@ ITEM_ORDER = {
     "Network & Services": [
         "background-services",
         "network-configurations",
+        "node-architecture.md",
         "using-rest",
         "messaging-services",
         "blockchain",
@@ -24,6 +25,7 @@ ITEM_ORDER = {
         "data-ingestion",
         "mapping-policies",
         "UNS",
+        "UNS-custom",
         "opcua",
         "using-kafka",
         "telegraf",
@@ -47,7 +49,6 @@ ITEM_ORDER = {
         "Google",
         "postgres-connector",
         "notification",
-        "node-red",
     ],
     "Monitoring & Operations": [
         "node-monitoring",
@@ -65,5 +66,6 @@ ITEM_ORDER = {
     ],
     "Reference": [
         "FAQ",
+        "troubleshooting"
     ],
 }
