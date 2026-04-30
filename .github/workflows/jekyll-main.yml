@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -17,13 +17,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  sync-changelogs:
-    uses: AnyLog-co/anylog-docs.github.io/.github/workflows/sync-changelog.yml@main
-    secrets: inherit           # passes ANYLOG_APP_ID through automatically
 
+  # Predecessor: validate ToC and internal links
   validate:
     runs-on: ubuntu-latest
-    needs: sync-changelogs
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +33,7 @@ jobs:
       - name: Validate ToC and internal links
         run: python .github/scripts/validate_docs.py
 
+  # Build
   build:
     runs-on: ubuntu-latest
     needs: validate
@@ -43,8 +41,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: main
       - name: Setup Ruby
         uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4
         with:
@@ -61,6 +57,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
+  # Deploy
   deploy:
     environment:
       name: github-pages

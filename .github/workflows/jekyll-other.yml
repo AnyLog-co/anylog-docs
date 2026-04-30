@@ -3,23 +3,24 @@ name: Validate docs + Jekyll (non-main)
 on:
   push:
     branches-ignore: ["main"]
-
+  pull_request:
+    branches: ["main"]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  sync-changelogs:
-    uses: AnyLog-co/anylog-docs.github.io/.github/workflows/sync-changelog.yml@pre-develop
-    secrets: inherit           # passes ANYLOG_APP_ID through automatically
-
   validate:
     runs-on: ubuntu-latest
-    needs: sync-changelogs     # waits for sync before validating
+
     steps:
+      # Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ------------------------
+      # Python validation
+      # ------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -31,6 +32,9 @@ jobs:
       - name: Validate ToC and internal links
         run: python .github/scripts/validate_docs.py
 
+      # ------------------------
+      # Jekyll validation
+      # ------------------------
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
