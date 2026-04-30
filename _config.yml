@@ -27,7 +27,9 @@ exclude:
 - README.md
 - vendor
 include:
-- assets/img/node_configs.env
+- _includes/sample-post.py
+- _includes/sample-put.py
+- _includes/node_configs.env
 nav:
 - title: Getting Started
   items:

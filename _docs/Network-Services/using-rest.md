@@ -240,7 +240,7 @@ curl -X POST 'http://10.0.0.69:32349' \
 ```
 
 > Full working examples can be found in
-> <a href="#" onclick="openEnvModal(); return false;">examples/sample-post.py</a>
+> <a href="#" onclick="openEnvModal('/assets/examples/sample-post.py'); return false;">sample-post.py</a>
 
 
 --- 
@@ -368,4 +368,4 @@ curl -X PUT 'http://10.0.0.78:32149' \
 Expected response: `{"AnyLog.status":"Success", "AnyLog.hash": "0dd6b959..."}`
 
 > Full working examples can be found in
-> <a href="#" onclick="openEnvModal(); return false;">examples/sample-put.py</a>
+> <a href="#" onclick="openEnvModal('/assets/examples/sample-put.py'); return false;">sample-put.py</a>
