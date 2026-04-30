@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: pre-develop
-          token: ${{ secrets.ANYLOG_APP_ID }}
+          token: ${{ secrets.MOSHE_PEM }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
