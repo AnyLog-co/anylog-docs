@@ -7,38 +7,24 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: write        # changed from read — needed to push synced files
+  contents: write
 
 jobs:
+  sync-changelogs:
+    uses: AnyLog-co/anylog-docs.github.io/.github/workflows/sync-changelog.yml@pre-develop
+    secrets: inherit           # passes ANYLOG_APP_ID through automatically
+
   validate:
     runs-on: ubuntu-latest
-
+    needs: sync-changelogs     # waits for sync before validating
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.SHARED_DOCS_PAT }}   # needed to push
 
-      # ── NEW ──────────────────────────────────────────────────────
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Sync CHANGELOGs from source repos
-        env:
-          GH_TOKEN: ${{ secrets.SHARED_DOCS_PAT }}
-        run: python .github/scripts/sync_changelogs.py
-
-      - name: Commit synced CHANGELOGs
-        run: |
-          git config user.name  "anylog-ci-bot[bot]"
-          git config user.email "anylog-ci-bot[bot]@users.noreply.github.com"
-          git add _docs/Version-Control/
-          git diff --cached --quiet && echo "No changes" || \
-            git commit -s -m "chore: sync CHANGELOGs [skip ci]"
-          git push
-      # ── END NEW ──────────────────────────────────────────────────
 
       - name: Install Python dependencies
         run: pip install pyyaml

@@ -2,13 +2,14 @@ name: Sync CHANGELOGs from source repos
 
 on:
   workflow_dispatch:          # manual trigger from GitHub UI
+  workflow_call:              # called by jekyll-main.yml and jekyll-other.yml
   repository_dispatch:        # triggered by source repos via API call
     types: [changelog-updated]
   schedule:
     - cron: '0 6 * * *'      # daily safety net at 06:00 UTC
 
 permissions:
-  contents: write             # needs write to push to pre-develop
+  contents: write
 
 jobs:
   sync:
@@ -18,8 +19,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          ref: pre-develop
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ANYLOG_APP_ID }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
